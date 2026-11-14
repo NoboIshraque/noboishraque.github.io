@@ -209,23 +209,21 @@ footer nav{display:flex;gap:18px;flex-wrap:wrap}
 .story.still canvas{display:none}
 .story.still .story-poster{position:static;transform:none;opacity:1}
 
-/* AgroBot scroll-scrubbed footage */
-.scrub{position:relative;height:300vh;margin-top:12px}
-.scrub-sticky{position:sticky;top:0;height:100vh;height:100svh;display:grid;place-items:center}
-.scrub-frame{position:relative;width:min(100%,1100px,calc((100svh - 140px) * 1.29));aspect-ratio:720/558;border-radius:28px;overflow:hidden;background:#111}
-.scrub canvas{width:100%;height:100%;display:block}
+/* AgroBot film: plays on its own while it is on screen */
+.film{position:relative;margin:56px auto 0;max-width:1100px;aspect-ratio:960/746;border-radius:28px;overflow:hidden;background:#111}
+.film video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.film-progress{position:absolute;left:24px;right:24px;top:18px;height:3px;border-radius:3px;background:rgba(255,255,255,.2);overflow:hidden}
+.film-progress i{display:block;height:100%;width:0;background:#fff;border-radius:3px}
+.film-btn{position:absolute;right:20px;bottom:20px;width:46px;height:46px;border-radius:50%;border:0;background:rgba(255,255,255,.2);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);color:#fff;display:grid;place-items:center;cursor:pointer;transition:background .2s}
+.film-btn:hover{background:rgba(255,255,255,.32)}
+.film-btn svg{width:18px;height:18px}
 .scap{position:absolute;left:24px;bottom:24px;max-width:min(420px,calc(100% - 48px));background:rgba(0,0,0,.62);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-radius:18px;padding:16px 18px;opacity:0;transform:translateY(14px);transition:opacity .45s,transform .45s}
 .scap.on{opacity:1;transform:none}
 .scap b{display:block;color:#fff;font-size:21px;font-weight:600;letter-spacing:-.02em}
 .scap span{display:block;color:#d2d2d7;font-size:15px;margin-top:4px}
-.scrub-progress{position:absolute;left:24px;right:24px;top:18px;height:3px;border-radius:3px;background:rgba(255,255,255,.18);overflow:hidden}
-.scrub-progress i{display:block;height:100%;width:0;background:#fff;border-radius:3px}
 @media(max-width:600px){.scap{left:12px;bottom:12px;padding:12px 14px}.scap b{font-size:17px}.scap span{font-size:13px}}
-.scrub.still{height:auto}
-.scrub.still .scrub-sticky{position:relative;height:auto}
-.scrub.still .scap{position:static;opacity:1;transform:none;max-width:none;background:#1d1d1f;margin-top:12px}
-.scrub.still .scrub-frame{aspect-ratio:auto;overflow:visible;background:none}
-.scrub.still canvas{aspect-ratio:720/558;border-radius:28px;height:auto}
+.film .scap{max-width:min(420px,calc(100% - 100px))}
+@media(max-width:600px){.film{margin-top:40px;border-radius:20px}.film-progress{left:14px;right:14px;top:12px}.film-btn{right:12px;bottom:12px;width:38px;height:38px}.film .scap{max-width:calc(100% - 70px)}}
 
 /* motion */
 .js .reveal{opacity:0;transform:translateY(40px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
@@ -369,17 +367,14 @@ footer nav{display:flex;gap:18px;flex-wrap:wrap}
       <h2 class="robot-title">AgroBot.</h2>
       <p>An autonomous, solar-powered robot that uses on-board edge AI to detect diseases across multiple crops and apply pesticide. Built with my team and shown at the Bangladesh Innovation Fair 2026.</p>
     </div>
-    <div class="scrub" id="scrub">
-      <div class="scrub-sticky">
-        <div class="scrub-frame">
-          <canvas id="agro" width="720" height="558" role="img" aria-label="AgroBot driving along a row of tomato plants at the Bangladesh Innovation Fair 2026"></canvas>
-          <div class="scrub-progress" aria-hidden="true"><i id="agroBar"></i></div>
-          <div class="scap on" data-from="-1" data-to="0.27"><b>Multi-crop disease detection</b><span>Checks plants for signs of disease as it drives along the rows.</span></div>
-          <div class="scap" data-from="0.27" data-to="0.52"><b>On-board edge AI</b><span>The AI runs on the robot itself, right where the crops are.</span></div>
-          <div class="scap" data-from="0.52" data-to="0.77"><b>Pesticide application</b><span>Applies pesticide as it moves along the rows.</span></div>
-          <div class="scap" data-from="0.77" data-to="2"><b>Solar powered</b><span>A solar panel on top helps power it outdoors.</span></div>
-        </div>
-      </div>
+    <div class="film reveal" id="film">
+      <video id="agroVid" muted loop playsinline preload="metadata" poster="assets/agrobot-poster.jpg" aria-label="AgroBot driving along a row of tomato plants at the Bangladesh Innovation Fair 2026"><source src="assets/agrobot.mp4" type="video/mp4"></video>
+      <div class="film-progress" aria-hidden="true"><i id="agroBar"></i></div>
+      <div class="scap on" data-from="-1" data-to="0.25"><b>Multi-crop disease detection</b><span>Checks plants for signs of disease as it drives along the rows.</span></div>
+      <div class="scap" data-from="0.25" data-to="0.5"><b>On-board edge AI</b><span>The AI runs on the robot itself, right where the crops are.</span></div>
+      <div class="scap" data-from="0.5" data-to="0.75"><b>Pesticide application</b><span>Applies pesticide as it moves along the rows.</span></div>
+      <div class="scap" data-from="0.75" data-to="2"><b>Solar powered</b><span>A solar panel on top helps power it outdoors.</span></div>
+      <button class="film-btn" id="agroBtn" type="button" aria-label="Play video"></button>
     </div>
     <div class="press reveal">
       <span>Featured on</span>
@@ -496,41 +491,44 @@ footer nav{display:flex;gap:18px;flex-wrap:wrap}
   /* 3D laptop and phone, loaded only when the section gets close */
   var story=(function(){
     var sec=document.getElementById('story'), cv=document.getElementById('devices'), cl=sec.querySelectorAll('.cap'), dev=null, started=false;
+    var cur=0, tgt=0, raf=0, last=0;
+    /* glide toward the scroll position instead of jumping, so wheel steps and fast flicks look smooth */
+    function loop(t){
+      raf=0; var dt=last?Math.min(0.05,(t-last)/1000):1/60; last=t;
+      cur+=(tgt-cur)*(1-Math.exp(-dt*7));
+      if(Math.abs(tgt-cur)<0.0003)cur=tgt;
+      caps(cl,cur); if(dev)dev.setProgress(cur);
+      if(cur!==tgt)raf=requestAnimationFrame(loop); else last=0;
+    }
     var gl=false; try{ gl=!!(window.WebGLRenderingContext && (cv.getContext('webgl2')||cv.getContext('webgl'))); }catch(e){}
     if(reduce||!gl){ sec.classList.add('still'); var im=sec.querySelector('.story-poster'); im.loading='eager'; return {update:function(){}}; }
     function start(){
       if(started)return; started=true;
       import('./assets/devices.js').then(function(m){
         dev=m.mountDevices(cv,{laptopA:'assets/tex/desk.jpg',laptopB:'assets/tex/shop.jpg',phone:'assets/tex/phone.jpg'});
-        dev.ready.then(function(){ sec.classList.add('live'); dev.setProgress(prog(sec)); dev.render(); });
+        dev.ready.then(function(){ sec.classList.add('live'); cur=tgt=prog(sec); dev.setProgress(cur); dev.render(); });
         window.addEventListener('resize',function(){ dev.resize(); });
       }).catch(function(){ sec.classList.add('still'); });
     }
     if('IntersectionObserver' in window){ new IntersectionObserver(function(es){ if(es[0].isIntersecting)start(); },{rootMargin:'150% 0px'}).observe(sec); } else start();
-    return {update:function(){ var p=prog(sec); caps(cl,p); if(dev)dev.setProgress(p); }};
+    return {update:function(){ tgt=prog(sec); if(!raf)raf=requestAnimationFrame(loop); }};
   })();
 
-  /* AgroBot footage that plays forward and back with the scroll */
-  var scrub=(function(){
-    var sec=document.getElementById('scrub'), cv=document.getElementById('agro'), ctx=cv.getContext('2d'), bar=document.getElementById('agroBar'), cl=sec.querySelectorAll('.scap');
-    var N=84, frames=new Array(N), shown=-1, loading=false;
-    function src(i){ return 'assets/agrobot-frames/f'+String(i+1).padStart(3,'0')+'.webp'; }
-    function get(i,cb){ var im=new Image(); im.decoding='async'; im.onload=function(){ frames[i]=im; if(cb)cb(); }; im.src=src(i); }
-    function draw(i){
-      var best=-1; for(var d=0; d<N; d++){ if(frames[i-d]){best=i-d;break} if(frames[i+d]){best=i+d;break} }
-      if(best<0||best===shown)return; shown=best; ctx.drawImage(frames[best],0,0,cv.width,cv.height);
-    }
-    function loadAll(){
-      if(loading)return; loading=true;
-      var order=[]; for(var step=16; step>=1; step=step>>1){ for(var i=0;i<N;i+=step){ if(order.indexOf(i)<0)order.push(i); } }
-      var k=0; function next(){ if(k>=order.length)return; var i=order[k++]; if(frames[i]){next();return} get(i,function(){ update(); next(); }); }
-      for(var c=0;c<6;c++)next();
-    }
-    get(0,function(){ draw(0); });
-    if(reduce){ sec.classList.add('still'); return {update:function(){}}; }
-    if('IntersectionObserver' in window){ new IntersectionObserver(function(es){ if(es[0].isIntersecting)loadAll(); },{rootMargin:'120% 0px'}).observe(sec); } else loadAll();
-    function update(){ var p=prog(sec); caps(cl,p); bar.style.width=(p*100).toFixed(1)+'%'; draw(Math.round(p*(N-1))); }
-    return {update:update};
+  /* AgroBot film: plays on its own when on screen, pauses when off screen */
+  (function(){
+    var v=document.getElementById('agroVid'), btn=document.getElementById('agroBtn'), bar=document.getElementById('agroBar'), cl=document.querySelectorAll('#film .scap');
+    var want=!reduce, raf=0;
+    var PAUSE='<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1.2"/><rect x="14" y="5" width="4" height="14" rx="1.2"/></svg>';
+    var PLAY='<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.6v12.8c0 .8.9 1.3 1.6.9l10-6.4c.6-.4.6-1.3 0-1.7l-10-6.4c-.7-.5-1.6 0-1.6.8z"/></svg>';
+    function setBtn(){ var on=!v.paused; btn.innerHTML=on?PAUSE:PLAY; btn.setAttribute('aria-label',on?'Pause video':'Play video'); }
+    function tick(){ raf=0; var d=v.duration||12, p=(v.currentTime%d)/d; bar.style.width=(p*100).toFixed(2)+'%'; caps(cl,p); if(!v.paused)raf=requestAnimationFrame(tick); }
+    function play(){ var pr=v.play(); if(pr&&pr.catch)pr.catch(function(){ setBtn(); }); }
+    v.addEventListener('play',function(){ setBtn(); if(!raf)raf=requestAnimationFrame(tick); });
+    v.addEventListener('pause',setBtn);
+    btn.addEventListener('click',function(){ if(v.paused){ want=true; play(); } else { want=false; v.pause(); } });
+    if('IntersectionObserver' in window){ new IntersectionObserver(function(es){ if(es[0].isIntersecting){ if(want)play(); } else if(!v.paused)v.pause(); },{threshold:0.35}).observe(v); }
+    else if(want)play();
+    setBtn(); caps(cl,0);
   })();
 
   /* scroll effects: lines light up, the stories advance */
@@ -539,7 +537,7 @@ footer nav{display:flex;gap:18px;flex-wrap:wrap}
     ticking=false;
     var vh=window.innerHeight;
     spans.forEach(function(s){ var r=s.getBoundingClientRect(); s.classList.toggle('on', r.top+r.height/2 < vh*0.62); });
-    story.update(); scrub.update();
+    story.update();
   }
   window.addEventListener('scroll',function(){ if(!ticking){ticking=true;requestAnimationFrame(onScroll)} },{passive:true});
   onScroll();
