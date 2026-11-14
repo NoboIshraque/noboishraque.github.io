@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Answer Desk Demo · Nobo Ishraque</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Layout: demo bar, short intro, then a two-column desk: the guest chat widget (left) and the documents it answers from (right); stacks on phones. */
+  --ink:#14202d; --muted:#596574; --paper:#f2f4f6; --card:#ffffff; --line:#dbe1e7;
+  --accent:#2b5d8a; --accent-soft:#e4edf6; --brand:#5e2b45; --brand-soft:#f4e9ef; --hl:#ffeeb0; --bar:#14202d;
+  --f-display:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1160px;margin:0 auto;padding:0 16px}
+h1,h2,h3{text-wrap:balance}
+.demobar{background:var(--bar);color:#e9eef3;font-size:14px}
+.demobar .wrap{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;padding-top:8px;padding-bottom:8px}
+.pill{background:#fff;color:var(--bar);font-weight:700;font-size:11px;letter-spacing:.08em;padding:2px 9px;border-radius:99px}
+.demobar span.n{color:#b9c4cf}
+.intro{padding:26px 0 8px}
+.intro h1{font-family:var(--f-display);font-weight:700;font-size:clamp(28px,4.4vw,40px);line-height:1.12;margin:0 0 8px;max-width:22ch}
+.intro p{margin:0;color:var(--muted);max-width:64ch;font-size:17px}
+.desk{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:20px;padding:18px 0 22px;align-items:start}
+@media(max-width:899px){.desk{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px}
+
+/* chat widget */
+.widget{display:flex;flex-direction:column;overflow:hidden;box-shadow:0 14px 34px #14202d14}
+.w-head{background:var(--brand);color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.w-brand{font-family:var(--f-display);font-weight:700;font-size:21px;line-height:1.1}
+.w-brand small{display:block;font-family:var(--f-body);font-weight:400;font-size:13px;opacity:.85;margin-top:2px}
+.modes{display:inline-flex;background:#ffffff26;border-radius:99px;padding:3px}
+.modes button{border:0;background:transparent;color:#fff;opacity:.8;padding:4px 11px;border-radius:99px;font-size:13px;font-weight:600;cursor:pointer}
+.modes button[aria-pressed="true"]{background:#fff;color:var(--brand);opacity:1}
+.modes button:disabled{cursor:not-allowed;opacity:.45}
+.w-body{height:500px;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;background:#fbfbfc}
+@media(max-width:899px){.w-body{height:440px}}
+.m{max-width:88%;border-radius:16px;padding:10px 13px;font-size:15px;line-height:1.5;overflow-wrap:anywhere}
+.m.q{align-self:flex-end;background:var(--accent);color:#fff;border-bottom-right-radius:5px}
+.m.a{align-self:flex-start;background:#fff;border:1px solid var(--line);border-bottom-left-radius:5px}
+.m.a .lead{color:var(--muted);font-size:13.5px;margin-bottom:4px}
+.m.a h4{margin:6px 0 2px;font-size:14px}
+.m.a p{margin:0}
+.m.a p+p{margin-top:6px}
+.m.a.miss{background:#fff8ec;border-color:#f0dcb8}
+mark{background:var(--hl);color:inherit;border-radius:3px;padding:0 2px}
+.srcs{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.src{border:1px solid var(--line);background:var(--accent-soft);color:var(--accent);border-radius:99px;padding:2px 10px;font-size:12.5px;font-weight:600;cursor:pointer}
+.tagline{font-size:11.5px;color:var(--muted);margin-top:6px;letter-spacing:.02em}
+.typing{align-self:flex-start;display:flex;gap:4px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px 14px}
+.typing i{width:6px;height:6px;border-radius:50%;background:#8b96a3;animation:b 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes b{0%,80%,100%{opacity:.3}40%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.typing i{animation:none}}
+.sugg{display:flex;flex-wrap:wrap;gap:6px;padding:10px 14px;border-top:1px solid var(--line);background:#fff}
+.sugg button{border:1px solid var(--line);background:#fff;border-radius:99px;padding:4px 11px;font-size:13.5px;cursor:pointer}
+.sugg button:hover{border-color:var(--accent);color:var(--accent)}
+.w-input{display:flex;gap:8px;padding:10px 14px 14px;background:#fff}
+.w-input input{flex:1;min-width:0;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#f7f8fa}
+.w-input button{border:0;background:var(--brand);color:#fff;border-radius:12px;padding:10px 16px;font-weight:600;cursor:pointer}
+.modenote{font-size:13px;color:var(--muted);padding:0 14px 14px;background:#fff;margin:0}
+
+/* knowledge */
+.kb{padding:16px}
+.kb-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.kb h2,.box h2{font-family:var(--f-display);font-size:22px;margin:0}
+.kb .sub{color:var(--muted);font-size:14px;margin:2px 0 12px}
+.docs{max-height:560px;overflow-y:auto;border:1px solid var(--line);border-radius:12px;background:#fbfbfc}
+.doc{padding:12px 14px;border-bottom:1px solid var(--line)}
+.doc:last-child{border-bottom:0}
+.doc h3{margin:0 0 6px;font-size:15px;text-transform:uppercase;letter-spacing:.06em;color:var(--brand)}
+.pass{padding:8px 10px;border-radius:10px;transition:background .3s}
+.pass h4{margin:0;font-size:14.5px}
+.pass p{margin:2px 0 0;font-size:14px;color:#33404d}
+.pass.lit{background:var(--hl)}
+@media (prefers-reduced-motion:reduce){.pass{transition:none}}
+.mine{margin-top:16px}
+.mine label{display:block;font-weight:600;font-size:14.5px;margin-bottom:4px}
+.mine textarea{width:100%;min-height:130px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14px;resize:vertical;background:#fff}
+.mine .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;align-items:center}
+.btn{border:1px solid transparent;border-radius:10px;padding:8px 14px;font-weight:600;font-size:14.5px;cursor:pointer}
+.btn.primary{background:var(--accent);color:#fff}
+.btn.ghost{background:#fff;border-color:var(--line)}
+.small{font-size:13px;color:var(--muted)}
+.err{color:#b42318;font-size:13px}
+
+/* offer */
+.offer{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:20px;padding-bottom:40px}
+@media(max-width:899px){.offer{grid-template-columns:minmax(0,1fr)}}
+.box{padding:18px}
+.box ul{margin:10px 0 0;padding-left:20px}
+.box li{margin:4px 0}
+.credit{background:var(--bar);color:#e9eef3;border:0}
+.credit p{color:#c7d0d9;margin:6px 0 0}
+.credit a{color:#fff;font-weight:700}
+</style>
+</head>
+<body>
+<div class="demobar"><div class="wrap"><span class="pill">DEMO</span><span>AI answer desk demo by Nobo Ishraque.</span><span class="n">Larkspur House is a made-up guesthouse. The assistant answers only from its documents on this page.</span></div></div>
+
+<header class="intro"><div class="wrap">
+  <h1>A website assistant that answers from your client’s own documents</h1>
+  <p>Ask it what a guest would ask. It finds the answer in the business’s documents, shows where the answer came from, and says so when the documents don’t cover it.</p>
+</div></header>
+
+<main class="wrap desk">
+  <section class="card widget" aria-label="Guest chat">
+    <div class="w-head">
+      <div class="w-brand" id="bizName">Larkspur House<small>Ask us anything about your stay</small></div>
+      <div class="modes" role="group" aria-label="Answer mode">
+        <button type="button" id="mAi" aria-pressed="false" disabled>AI answers</button>
+        <button type="button" id="mSearch" aria-pressed="true">Search only</button>
+      </div>
+    </div>
+    <div class="w-body" id="chat" aria-live="polite"></div>
+    <div class="sugg" id="sugg"></div>
+    <form class="w-input" id="askForm"><input id="askIn" autocomplete="off" placeholder="Ask a question…" aria-label="Ask a question"><button type="submit">Ask</button></form>
+    <p class="modenote" id="modeNote"></p>
+  </section>
+
+  <section class="card kb" aria-label="What the assistant knows">
+    <div class="kb-head"><h2>What it knows</h2><span class="small" id="kbCount"></span></div>
+    <p class="sub" id="kbSub"></p>
+    <div class="docs" id="docs"></div>
+    <div class="mine">
+      <label for="mineText">Try it with your own text</label>
+      <textarea id="mineText" placeholder="Paste a client’s FAQ, policy page or menu here. Put a blank line between topics."></textarea>
+      <div class="row">
+        <button type="button" class="btn primary" id="useMine">Answer from this text</button>
+        <button type="button" class="btn ghost" id="useSample">Back to Larkspur House</button>
+        <span class="err" id="mineErr"></span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<section class="wrap offer">
+  <div class="card box">
+    <h2>What the real build includes</h2>
+    <ul>
+      <li>Set up on your client’s own documents and web pages, and answers only from them.</li>
+      <li>Shows its source with each answer, so staff can check it.</li>
+      <li>When the documents don’t cover a question, it says so and gives the contact email.</li>
+      <li>Embeds on the client’s site with one script tag, under your agency’s name.</li>
+      <li>Fixed price, from $300, delivered in about a week.</li>
+    </ul>
+  </div>
+  <div class="card box credit">
+    <h2>Built by Nobo Ishraque</h2>
+    <p>I’m a web developer in Dhaka, Bangladesh. I build white-label chat assistants, landing pages and small web apps for agencies, at a fixed price.</p>
+    <p>Email: <a href="mailto:noboishraque@gmail.com">noboishraque@gmail.com</a></p>
+  </div>
+</section>
+
+<script>
+(function(){
+'use strict';
+/* ===== knowledge ===== */
+var SAMPLE={name:'Larkspur House',contact:'stay@larkspurhouse.example',docs:[
+ {id:'guide',title:'House guide',sections:[
+  {id:'checkin',h:'Check-in and check-out',t:'Check-in is from 3 pm to 8 pm. Check-out is by 11 am. If you will arrive after 8 pm, tell us by noon on the day and we will send you a door code for the key safe. Early check-in from 1 pm costs £15 when a room is ready; ask us the day before.'},
+  {id:'parking',h:'Parking',t:'We have 3 off-road parking spaces. They are free and first come, first served, and you cannot reserve one. When they are full, the nearest council car park is a 5-minute walk and costs about £12 for 24 hours. There is no electric car charging.'},
+  {id:'wifi',h:'Wi-Fi',t:'Free Wi-Fi works in every room and in the breakfast room. The network name and password are on the card next to your kettle. It is fast enough for video calls.'},
+  {id:'getting',h:'Getting here',t:'We are a 12-minute walk from York station. A taxi from the station costs about £8. Our address is 14 Larkspur Row, York.'},
+  {id:'quiet',h:'Quiet hours and smoking',t:'Quiet hours are 10:30 pm to 7 am. The whole house is non-smoking, and that includes vaping and e-cigarettes. If anyone smokes in a room, we charge £150 for cleaning.'},
+  {id:'luggage',h:'Luggage storage',t:'We can store your luggage before check-in and after check-out, free of charge, in a locked room.'}
+ ]},
+ {id:'rates',title:'Rates and booking',sections:[
+  {id:'roomrates',h:'Room rates',t:'Double rooms cost £95 a night from Sunday to Thursday and £120 a night on Friday and Saturday. The family room sleeps 4 and costs £150 a night all week. Rates include breakfast and VAT. On Saturdays the minimum stay is 2 nights.'},
+  {id:'deposit',h:'Deposit and payment',t:'We take a 25% deposit when you book, and you pay the rest when you arrive. We accept Visa, Mastercard, Amex and cash. We do not accept cheques.'},
+  {id:'cancel',h:'Cancellation',t:'You can cancel free of charge up to 7 days before you arrive, and we refund your deposit in full. If you cancel within 7 days of arrival, we keep the deposit. If you do not arrive and do not tell us, we charge the first night in full.'},
+  {id:'change',h:'Changing your dates',t:'You can move your booking to other dates once, free of charge, if you ask at least 48 hours before arrival and we have a room free.'},
+  {id:'children',h:'Children',t:'Children are welcome. Cots are free and we have high chairs; please ask for them when you book. Children under 3 stay free. Children aged 3 to 12 sharing the family room cost £15 a night.'}
+ ]},
+ {id:'food',title:'Breakfast',sections:[
+  {id:'times',h:'Breakfast times',t:'Breakfast is served from 7:30 to 9:30 am on weekdays and from 8 to 10 am at weekends, in the breakfast room on the ground floor.'},
+  {id:'menu',h:'Breakfast menu',t:'We serve a full Yorkshire breakfast, smoked salmon with scrambled eggs, porridge, fresh fruit, yoghurt and bread from a local bakery. Our coffee comes from a York roastery.'},
+  {id:'diet',h:'Dietary needs and allergies',t:'We make vegetarian, vegan and gluten-free breakfasts every day. Tell us about any allergy at least 48 hours before you arrive so we can plan. We cannot promise a nut-free kitchen.'},
+  {id:'packed',h:'Packed breakfast',t:'Leaving before breakfast? Ask us the evening before and we will leave a packed breakfast for you, free of charge.'},
+  {id:'evening',h:'Evening meals',t:'We do not serve evening meals. There is a printed list of nearby restaurants in your room.'}
+ ]},
+ {id:'access',title:'Pets and access',sections:[
+  {id:'dogs',h:'Dogs',t:'Well-behaved dogs are welcome in our two ground-floor rooms, up to 2 dogs per room, for £15 per dog per night. Dogs cannot come into the breakfast room. Assistance dogs are welcome everywhere, free of charge.'},
+  {id:'otherpets',h:'Other pets',t:'We cannot take cats or other pets.'},
+  {id:'room1',h:'Accessible room',t:'Room 1 is on the ground floor, with level access from the car park, a wide door and a walk-in shower with grab rails.'},
+  {id:'lift',h:'Stairs and lift',t:'There is no lift. The other rooms are on the first and second floors, and the stairs are steep. If stairs are hard for you, book Room 1 or ask us before you book.'}
+ ]}
+]};
+var SUGGEST=['Can I bring my dog?','Is parking free?','What if I need to cancel?','Do you do vegan breakfast?','Is there a lift?','Can I check in at 10 pm?','Do you have a gym?'];
+
+/* ===== search engine (runs in the page, no server) ===== */
+var STOP={};('a an the is are was were be been am i im me my we our ours you your yours it its of to in on at for from by with and or but if do does did can could would should will shall have has had there here this that these those what which who whom when where why how any some about into as so not no yes up out than then too very just also please tell know need want get like much many ok okay hi hello thanks thank us they them their there\'s take bring use allowed allow dont don\'t isnt isn\'t cant can\'t ll ve re d s t').split(' ').forEach(function(w){STOP[w]=1});
+var NORM={cancellation:'cancel',cancelled:'cancel',cancelling:'cancel',canceled:'cancel',refund:'cancel',refunds:'cancel',arrival:'arrive',arriving:'arrive',arrives:'arrive',late:'arrive',accessible:'access',accessibility:'access',wheelchair:'access',disabled:'access',disability:'access',children:'child',kids:'child',kid:'child',toddler:'child',baby:'cot',babies:'cot',infant:'cot',elevator:'lift',lifts:'lift',puppy:'dog',pets:'pet',internet:'wifi',password:'wifi',coeliac:'gluten',celiac:'gluten',allergies:'allergy',allergic:'allergy',smoke:'smoking',vape:'smoking',vaping:'smoking',cigarettes:'smoking','e-cigarettes':'smoking',bags:'luggage',bag:'luggage',suitcase:'luggage',suitcases:'luggage',price:'£',prices:'£',cost:'£',costs:'£',charge:'£',charges:'£',fee:'£',fees:'£',rate:'£',rates:'£',expensive:'£',cheap:'£',dinner:'evening',supper:'evening',taxi:'station',train:'station',stairs:'stair',steps:'stair',parking:'park',car:'park',cars:'park',evening:'evening',morning:'morning',american:'amex',express:'amex',visa:'card',mastercard:'card',cards:'card',credit:'card',debit:'card',paying:'pay',payment:'pay',payments:'pay'};
+var SYN={dog:['pet'],pet:['dog'],cot:['child'],child:['cot'],lift:['stair','access'],stair:['lift'],access:['room1','stair'],gluten:['dietary'],vegan:['dietary'],vegetarian:['dietary'],allergy:['dietary'],evening:['meal','restaurant'],meal:['evening','breakfast'],arrive:['check'],check:['arrive'],cancel:['deposit'],breakfast:['menu']};
+function stem(w){
+  if(w.length>5&&/ing$/.test(w))w=w.slice(0,-3);
+  else if(w.length>4&&/ed$/.test(w))w=w.slice(0,-2);
+  if(w.length>4&&/ies$/.test(w))w=w.slice(0,-3)+'y';
+  else if(w.length>3&&/s$/.test(w)&&!/ss$/.test(w))w=w.slice(0,-1);
+  return w;
+}
+function norm(w){w=w.toLowerCase();if(NORM[w])return NORM[w];var s=stem(w);return NORM[s]||s}
+function words(text){return String(text).replace(/wi-?fi/gi,'wifi').replace(/£/g,' £ ').split(/[^A-Za-z0-9£'À-ɏ]+/).map(function(w){return w.replace(/^'+|'+$/g,'')}).filter(Boolean)}
+function tokens(text){return words(text).map(function(w){return w.toLowerCase()}).filter(function(w){return !STOP[w]}).map(norm).filter(function(w){return w&&!STOP[w]})}
+function buildIndex(kb){
+  var P=[];
+  kb.docs.forEach(function(d){d.sections.forEach(function(s){
+    var toks=tokens(s.h+' '+s.h+' '+s.t),tf={};toks.forEach(function(t){tf[t]=(tf[t]||0)+1});
+    P.push({doc:d,sec:s,len:toks.length,tf:tf});
+  })});
+  var df={};P.forEach(function(p){Object.keys(p.tf).forEach(function(t){df[t]=(df[t]||0)+1})});
+  var avg=P.reduce(function(a,p){return a+p.len},0)/Math.max(1,P.length);
+  return {P:P,df:df,avg:avg,N:P.length};
+}
+function search(idx,q){
+  var qt=tokens(q),w={};
+  qt.forEach(function(t){w[t]=1});
+  qt.forEach(function(t){(SYN[t]||[]).forEach(function(s){if(!w[s])w[s]=0.5})});
+  var k1=1.2,b=0.75;
+  var res=idx.P.map(function(p){
+    var sc=0,strong=0,hits=[];
+    Object.keys(w).forEach(function(t){
+      var f=p.tf[t];if(!f)return;
+      var idf=Math.log(1+(idx.N-idx.df[t]+0.5)/(idx.df[t]+0.5));
+      sc+=w[t]*idf*(f*(k1+1))/(f+k1*(1-b+b*p.len/idx.avg));
+      hits.push(t);if(w[t]===1&&t!=='£')strong++;
+    });
+    return {p:p,sc:sc,strong:strong,hits:hits};
+  }).filter(function(r){return r.sc>0&&r.strong>0}).sort(function(a,b){return b.sc-a.sc});
+  return {res:res,qt:qt,found:res.length>0&&res[0].sc>=MIN_SCORE};
+}
+var MIN_SCORE=1.4;
+
+/* ===== state ===== */
+var S={kb:SAMPLE,idx:null,mode:'search',aiReady:false,msgs:[],busy:false};
+/* The AI server (a Cloudflare Worker) holds the Claude API key. Paste its address here after deploying it. */
+var API_URL='';
+try{var ov=new URLSearchParams(location.search).get('api');if(ov&&/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(ov))API_URL=ov}catch(e){}
+function $(id){return document.getElementById(id)}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function srcLabel(p){return p.doc.title+' · '+p.sec.h}
+function highlight(text,hits){
+  var set={};hits.forEach(function(h){set[h]=1});
+  return String(text).split(/(\s+|[.,;:!?()])/).map(function(part){
+    var core=part.replace(/[^A-Za-z0-9£'\-]/g,'');
+    if(core&&set[norm(core.replace(/-/g,''))]&&!STOP[core.toLowerCase()])return '<mark>'+esc(part)+'</mark>';
+    if(core&&/wi-?fi/i.test(core)&&set.wifi)return '<mark>'+esc(part)+'</mark>';
+    return esc(part);
+  }).join('');
+}
+function missText(){
+  return S.kb===SAMPLE?'I can’t find that in '+SAMPLE.name+'’s information, so I won’t guess. You can email '+SAMPLE.contact+' and the team will reply.':'I can’t find that in the text you gave me, so I won’t guess.';
+}
+
+/* ===== answering ===== */
+function searchAnswer(q){
+  var r=search(S.idx,q);
+  if(!r.found)return {role:'a',miss:true,html:'<p>'+esc(missText())+'</p>',srcs:[],mode:'search'};
+  var top=r.res[0],picks=[top];
+  var second=r.res[1];
+  if(second&&second.sc>=top.sc*0.75&&second.sc>=MIN_SCORE)picks.push(second);
+  var html='<div class="lead">From '+esc(S.kb===SAMPLE?SAMPLE.name+'’s':'your')+' documents:</div>'+picks.map(function(x){return '<h4>'+esc(x.p.sec.h)+'</h4><p>'+highlight(x.p.sec.t,x.hits)+'</p>'}).join('');
+  return {role:'a',html:html,srcs:picks.map(function(x){return x.p}),mode:'search'};
+}
+function aiAnswer(q){
+  var r=search(S.idx,q),ctx=r.res.slice(0,5);
+  var hist=S.msgs.filter(function(m){return m.plain&&!m.greeting}).slice(-5,-1).map(function(m){return {role:m.role==='q'?'user':'assistant',text:m.plain}});
+  var payload={question:q,business:S.kb===SAMPLE?SAMPLE.name+', a guesthouse in York':'',contact:S.kb===SAMPLE?SAMPLE.contact:'',
+    passages:ctx.map(function(x){return {label:x.p.doc.title+' > '+x.p.sec.h,text:x.p.sec.t}}),history:hist};
+  var ctrl=new AbortController(),timer=setTimeout(function(){ctrl.abort()},25000);
+  return fetch(API_URL+'/answer',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload),signal:ctrl.signal})
+  .then(function(res){clearTimeout(timer);return res.json().catch(function(){return {}}).then(function(v){if(!res.ok)throw {code:v.error||('http_'+res.status)};return v})})
+  .then(function(v){
+    if(!v||typeof v.answer!=='string'||!v.answer.trim())throw {code:'bad_output'};
+    var srcs=(Array.isArray(v.sources)?v.sources:[]).map(function(n){return ctx[n-1]}).filter(Boolean).map(function(x){return x.p});
+    var seen={};srcs=srcs.filter(function(p){var k=p.doc.id+'|'+p.sec.id;if(seen[k])return false;seen[k]=1;return true});
+    return {role:'a',miss:v.found===false,html:'<p>'+esc(v.answer)+'</p>',plain:v.answer,srcs:v.found===false?[]:srcs,mode:'ai'};
+  },function(err){clearTimeout(timer);throw (err&&err.code)?err:{code:'network'}});
+}
+function ask(q){
+  q=q.trim();if(!q||S.busy)return;
+  S.msgs.push({role:'q',text:q,plain:q});
+  if(S.mode==='ai'&&S.aiReady){
+    S.busy=true;draw(true);
+    aiAnswer(q).then(function(m){S.msgs.push(m)},function(err){
+      var m=searchAnswer(q);
+      m.note=err&&err.code==='rate_limited'?'Too many questions in a short time, so this answer comes from search.':'The AI server didn’t answer, so this answer comes from search.';
+      S.msgs.push(m);
+    }).then(function(){S.busy=false;draw(false)});
+  }else{
+    var m=searchAnswer(q);m.plain=m.srcs.length?m.srcs.map(function(p){return p.sec.t}).join(' '):missText();
+    S.msgs.push(m);draw(false);
+  }
+}
+
+/* ===== drawing ===== */
+function draw(typing){
+  var c=$('chat');
+  c.innerHTML=S.msgs.map(function(m){
+    if(m.role==='q')return '<div class="m q">'+esc(m.text)+'</div>';
+    var src=m.srcs&&m.srcs.length?'<div class="srcs">'+m.srcs.map(function(p){return '<button type="button" class="src" data-src="'+esc(p.doc.id+'|'+p.sec.id)+'">'+esc(srcLabel(p))+'</button>'}).join('')+'</div>':'';
+    var tag=m.greeting?'':'<div class="tagline">'+(m.miss?'Not covered by the documents, so nothing was made up':m.mode==='ai'?'Written by AI from the documents':'Quoted from the documents (search)')+(m.note?' · '+esc(m.note):'')+'</div>';
+    return '<div class="m a'+(m.miss?' miss':'')+'">'+m.html+src+tag+'</div>';
+  }).join('')+(typing?'<div class="typing" aria-hidden="true"><i></i><i></i><i></i></div>':'');
+  c.scrollTop=c.scrollHeight;
+}
+function drawModes(){
+  $('mAi').disabled=!S.aiReady;
+  $('mAi').parentNode.style.display=API_URL?'':'none';
+  $('mAi').setAttribute('aria-pressed',S.mode==='ai');$('mSearch').setAttribute('aria-pressed',S.mode==='search');
+  $('modeNote').textContent=S.mode==='ai'?'AI mode: Claude reads the matching passages and writes a short answer that cites them.':
+    (S.aiReady||!API_URL?'Search mode: shows the exact passage that answers the question, with no AI.':'Search mode: shows the exact passage that answers the question. The AI mode is offline right now.');
+}
+function drawKB(){
+  var kb=S.kb,n=0;
+  $('docs').innerHTML=kb.docs.map(function(d){
+    return '<div class="doc"><h3>'+esc(d.title)+'</h3>'+d.sections.map(function(s){n++;return '<div class="pass" id="p-'+esc(d.id+'-'+s.id)+'"><h4>'+esc(s.h)+'</h4><p>'+esc(s.t)+'</p></div>'}).join('')+'</div>';
+  }).join('');
+  $('kbCount').textContent=kb.docs.length+(kb.docs.length===1?' document':' documents')+', '+n+' passages';
+  $('kbSub').textContent=kb===SAMPLE?'Larkspur House’s guest information. Tap a source under an answer to see the passage it came from.':'Your pasted text, split into passages. The assistant now answers only from this.';
+  $('bizName').innerHTML=esc(kb===SAMPLE?SAMPLE.name:'Your business')+'<small>'+(kb===SAMPLE?'Ask us anything about your stay':'Answering from your pasted text')+'</small>';
+}
+function drawSugg(){
+  var list=S.kb===SAMPLE?SUGGEST:[];
+  $('sugg').innerHTML=list.map(function(s){return '<button type="button" data-ask="'+esc(s)+'">'+esc(s)+'</button>'}).join('');
+  $('sugg').style.display=list.length?'':'none';
+}
+function useKB(kb){
+  S.kb=kb;S.idx=buildIndex(kb);S.msgs=[];drawKB();drawSugg();
+  var hello=kb===SAMPLE?'Hello! I can answer questions about staying at Larkspur House: rooms, breakfast, parking, dogs and more.':'Ready. Ask anything that your text covers, and something it doesn’t, to see how it handles both.';
+  S.msgs.push({role:'a',html:'<p>'+esc(hello)+'</p>',srcs:[],mode:'search',greeting:true});
+  draw(false);
+}
+function parseMine(text){
+  var blocks=text.replace(/\r/g,'').split(/\n\s*\n/).map(function(b){return b.trim()}).filter(Boolean),secs=[];
+  blocks.forEach(function(b,i){
+    var lines=b.split('\n'),first=lines[0].trim(),h,t;
+    if(lines.length>1&&first.length<=70&&!/[.!?]$/.test(first)){h=first.replace(/^#+\s*/,'');t=lines.slice(1).join(' ').trim()}
+    else{t=b.replace(/\s*\n\s*/g,' ');h=t.split(/\s+/).slice(0,6).join(' ')+(t.split(/\s+/).length>6?'…':'')}
+    if(t)secs.push({id:'s'+(i+1),h:h,t:t});
+  });
+  return {name:'Your business',docs:[{id:'mine',title:'Your text',sections:secs}]};
+}
+
+/* ===== events ===== */
+document.addEventListener('click',function(e){
+  var t=e.target.closest('button');if(!t)return;
+  if(t.dataset.ask){ask(t.dataset.ask);return}
+  if(t.dataset.src){
+    var el=$('p-'+t.dataset.src.replace('|','-'));if(!el)return;
+    document.querySelectorAll('.pass.lit').forEach(function(x){x.classList.remove('lit')});
+    el.classList.add('lit');
+    el.scrollIntoView({block:'center',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+    return;
+  }
+  if(t.id==='mAi'&&S.aiReady){S.mode='ai';drawModes();return}
+  if(t.id==='mSearch'){S.mode='search';drawModes();return}
+  if(t.id==='useMine'){
+    var txt=$('mineText').value.trim();
+    if(txt.length<40){$('mineErr').textContent='Paste a bit more text first: a few sentences at least.';return}
+    if(txt.length>20000)txt=txt.slice(0,20000);
+    var kb=parseMine(txt);
+    if(!kb.docs[0].sections.length){$('mineErr').textContent='I couldn’t find any text to use.';return}
+    $('mineErr').textContent='';useKB(kb);$('chat').scrollIntoView({block:'nearest'});return;
+  }
+  if(t.id==='useSample'){useKB(SAMPLE);return}
+});
+$('askForm').addEventListener('submit',function(e){e.preventDefault();var i=$('askIn'),v=i.value;i.value='';ask(v)});
+
+/* ===== start ===== */
+useKB(SAMPLE);
+ask('Can I bring my dog?');
+drawModes();
+if(API_URL){
+  fetch(API_URL+'/health').then(function(r){return r.json()}).then(function(v){if(v&&v.ok){S.aiReady=true;S.mode='ai';drawModes()}}).catch(function(){});
+}
+window.__desk={search:function(q){S.idx=S.idx||buildIndex(S.kb);var r=search(S.idx,q);return {found:r.found,top:r.res.slice(0,3).map(function(x){return x.p.sec.id+':'+x.sc.toFixed(2)})}}};
+})();
+</script>
+</body>
+</html>

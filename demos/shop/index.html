@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shop Website Demo · Nobo Ishraque</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Layout: dark demo bar, then either a phone-first shop site (view: site) or a chat phone + owner panel (view: inbox). Accent tokens are swapped per shop type by script. */
+  --ink:#2a1f26; --muted:#6b5d66; --paper:#fffafa; --card:#ffffff; --line:#e8e0e4;
+  --accent:#b0245a; --accent-ink:#ffffff; --accent-soft:#fbe4ed; --tile:#fde6ee; --tile2:#fff0d6;
+  --bar:#1c1820; --wa:#1b9e50; --ok:#17603f;
+  --f-display:"Baloo Da 2","Hind Siliguri",system-ui,sans-serif;
+  --f-body:"Hind Siliguri","Noto Sans Bengali",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+h1,h2,h3{text-wrap:balance}
+.hide{display:none!important}
+
+/* demo bar */
+.demobar{position:sticky;top:0;z-index:30;background:var(--bar);color:#f4eef1;font-size:14px}
+.demobar .wrap{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px;padding-top:8px;padding-bottom:8px}
+.db-text{display:flex;align-items:center;gap:8px;min-width:0;font-weight:500}
+.db-pill{flex:none;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:11px;letter-spacing:.08em;padding:2px 9px;border-radius:99px}
+.db-controls{display:flex;gap:8px;flex-wrap:wrap}
+.seg{display:inline-flex;background:#ffffff1a;border-radius:99px;padding:3px}
+.seg button{border:0;background:transparent;color:#f4eef1;opacity:.75;padding:5px 12px;border-radius:99px;cursor:pointer;font-size:14px;font-weight:600}
+.seg button[aria-pressed="true"]{background:#fff;color:var(--bar);opacity:1}
+.db-note{background:#2a2430;color:#e9e1e6;font-size:13px}
+.db-note .wrap{padding-top:5px;padding-bottom:6px}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:12px;padding:10px 18px;font-weight:600;font-size:16px;border:1px solid transparent;cursor:pointer;text-decoration:none;line-height:1.2}
+.btn.primary{background:var(--accent);color:var(--accent-ink)}
+.btn.wa{background:var(--wa);color:#fff}
+.btn.ghost{background:#fff;border-color:var(--line);color:var(--ink)}
+.btn.sm{padding:6px 12px;font-size:14px;border-radius:10px}
+.btn.block{width:100%}
+.btn[aria-disabled="true"]{opacity:.55}
+
+/* site: hero */
+.hero{background:linear-gradient(180deg,var(--accent-soft),var(--paper));padding:28px 0 18px}
+.hero-in{display:flex;gap:16px;align-items:flex-start}
+.logo{flex:none;width:64px;height:64px;border-radius:20px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-family:var(--f-display);font-weight:800;font-size:26px}
+.hero h1{font-family:var(--f-display);font-weight:800;font-size:clamp(28px,6vw,42px);line-height:1.1;margin:2px 0 0}
+.tag{margin:6px 0 12px;color:var(--muted);font-size:17px;max-width:52ch}
+.chips{list-style:none;margin:0 0 16px;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.chips li{background:#fff;border:1px solid var(--line);border-radius:99px;padding:3px 12px;font-size:14px;font-weight:500}
+.hero-cta{display:flex;gap:8px;flex-wrap:wrap}
+@media(max-width:480px){.logo{width:52px;height:52px;border-radius:16px;font-size:21px}}
+
+/* site: catalog */
+.sec{padding:22px 0}
+.sec h2{font-family:var(--f-display);font-weight:700;font-size:25px;line-height:1.2;margin:0 0 12px}
+.cats{display:flex;gap:8px;overflow-x:auto;padding:2px 0 14px;scrollbar-width:none}
+.cats::-webkit-scrollbar{display:none}
+.cats button{flex:none;border:1px solid var(--line);background:#fff;border-radius:99px;padding:6px 15px;font-weight:600;cursor:pointer}
+.cats button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px}
+@media(min-width:700px){.grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
+.pic{aspect-ratio:4/3;display:grid;place-items:center;font-size:54px;line-height:1;background:radial-gradient(circle at 35% 30%,#ffffff 0 16%,var(--t,var(--tile)) 72%)}
+.pbody{padding:11px 13px 13px;display:flex;flex-direction:column;gap:2px;flex:1}
+.pname{font-family:var(--f-display);font-weight:700;font-size:17.5px;line-height:1.25;margin:0}
+.punit{color:var(--muted);font-size:13px}
+.pdesc{font-size:14px;color:var(--muted);margin:2px 0 0;line-height:1.45}
+.price{margin-top:auto;padding-top:8px;font-weight:700;font-size:18px;font-variant-numeric:tabular-nums}
+.add{margin-top:8px;width:100%;border:0;background:var(--accent);color:var(--accent-ink);border-radius:10px;padding:8px 10px;font-weight:600;cursor:pointer}
+.qty{margin-top:8px;display:flex;align-items:center;justify-content:space-between;border:1.5px solid var(--accent);border-radius:10px;overflow:hidden}
+.qty button{border:0;background:var(--accent-soft);color:var(--accent);width:40px;height:36px;font-size:20px;font-weight:700;cursor:pointer}
+.qty span{font-weight:700;font-variant-numeric:tabular-nums}
+
+/* site: info */
+.steps{list-style:none;padding:0;margin:0;display:grid;gap:10px;counter-reset:s}
+@media(min-width:700px){.steps{grid-template-columns:repeat(3,1fr)}}
+.steps li{counter-increment:s;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px 12px 54px;position:relative;font-weight:500}
+.steps li::before{content:counter(s);position:absolute;left:14px;top:12px;width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-weight:700;font-size:15px}
+.two{display:grid;gap:12px}
+@media(min-width:700px){.two{grid-template-columns:1fr 1fr}}
+.box{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.box h3{margin:0 0 4px;font-size:17px}
+.box p{margin:0;color:var(--muted)}
+details{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+details+details{margin-top:8px}
+summary{cursor:pointer;font-weight:600}
+details p{margin:6px 0 2px;color:var(--muted)}
+.credit{background:var(--bar);color:#f4eef1;border-radius:18px;padding:18px;display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;justify-content:space-between}
+.credit b{display:block;font-size:17px}
+.credit p{margin:2px 0 0;color:#e2d8de;font-size:14.5px;max-width:60ch}
+.credit-actions{display:flex;gap:8px;flex-wrap:wrap}
+.credit .btn.ghost{background:transparent;border-color:#ffffff59;color:#fff}
+.foot{padding:4px 0 110px}
+
+/* cart bar + sheet */
+.cartbar{position:fixed;left:0;right:0;bottom:0;z-index:25;padding:10px 16px 14px;display:none;pointer-events:none}
+.cartbar.show{display:block}
+.cartbar button{pointer-events:auto;width:100%;max-width:560px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--ink);color:#fff;border:0;border-radius:16px;padding:14px 18px;font-weight:700;font-size:16px;box-shadow:0 10px 28px #0000003d;cursor:pointer}
+.cartbar .go{background:var(--accent);color:var(--accent-ink);border-radius:10px;padding:5px 12px}
+.sheet{position:fixed;inset:0;z-index:40;display:none;background:#1c18208c;align-items:flex-end;justify-content:center}
+.sheet.open{display:flex}
+.sheet-in{background:var(--paper);width:100%;max-width:560px;max-height:calc(100% - 20px);overflow:auto;border-radius:20px 20px 0 0;padding:16px 16px 22px}
+@media(min-width:700px){.sheet{align-items:center}.sheet-in{border-radius:20px;max-height:calc(100% - 48px)}}
+.sheet-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}
+.sheet-head h2{font-family:var(--f-display);font-size:24px;margin:0}
+.lines{list-style:none;margin:0 0 14px;padding:0;display:flex;flex-direction:column;gap:8px}
+.lines li{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 10px}
+.lines .nm{font-weight:600;line-height:1.3}
+.lines .nm small{display:block;font-weight:400;color:var(--muted)}
+.lines .qty{margin:0;width:112px}
+.lines .qty button{width:34px;height:32px;font-size:18px}
+.lines .lt{font-weight:700;font-variant-numeric:tabular-nums;min-width:68px;text-align:right}
+.form{display:grid;gap:10px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:420px){.row2{grid-template-columns:1fr}}
+.field label{display:block;font-size:14px;font-weight:600;margin-bottom:3px}
+.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:9px 12px;background:#fff}
+.field textarea{min-height:64px;resize:vertical}
+.err{color:#b42318;font-size:13px;margin-top:3px}
+.radio{display:flex;gap:8px;flex-wrap:wrap}
+.radio label{display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:7px 12px;font-weight:500;font-size:15px;cursor:pointer}
+.totals{margin:14px 0;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.totals div{display:flex;justify-content:space-between;font-variant-numeric:tabular-nums}
+.totals .grand{border-top:1px dashed var(--line);margin-top:6px;padding-top:6px;font-weight:700;font-size:18px}
+.small{font-size:13.5px;color:var(--muted)}
+.preview{white-space:pre-wrap;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14px;max-height:200px;overflow:auto;margin:4px 0 12px;font-family:var(--f-body)}
+.actions{display:grid;gap:8px}
+
+/* inbox */
+.inbox{display:grid;grid-template-columns:minmax(300px,380px) minmax(0,1fr);gap:24px;padding-top:22px;padding-bottom:40px;align-items:start}
+@media(max-width:899px){.inbox{grid-template-columns:minmax(0,1fr)}}
+.phone-tools{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:0 auto 10px;max-width:380px;flex-wrap:wrap}
+.switch{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600;cursor:pointer}
+.switch input{width:18px;height:18px;accent-color:var(--accent)}
+.phone{background:#fff;border:10px solid var(--bar);border-radius:34px;height:640px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 18px 40px #1c182026;max-width:380px;margin:0 auto}
+@media(max-width:899px){.phone{height:570px}}
+.ph-status{display:flex;justify-content:space-between;padding:5px 18px 1px;font-size:12px;font-weight:600;font-variant-numeric:tabular-nums}
+.ph-head{display:flex;align-items:center;gap:10px;padding:6px 14px 10px;border-bottom:1px solid var(--line)}
+.logo.sm{width:38px;height:38px;border-radius:50%;font-size:15px}
+.ph-head b{display:block;font-size:15px;line-height:1.2}
+.ph-head small{color:var(--ok);font-size:12px;font-weight:500}
+.ph-head small.off{color:#8a5a00}
+.ph-body{flex:1;overflow-y:auto;padding:14px 12px;display:flex;flex-direction:column;gap:8px;background:#faf8f9}
+.msg{max-width:84%;padding:8px 12px;border-radius:18px;font-size:14.5px;line-height:1.45;white-space:pre-line;overflow-wrap:anywhere}
+.msg.bot{align-self:flex-start;background:#eeeaed;border-bottom-left-radius:6px}
+.msg.me{align-self:flex-end;background:var(--accent);color:var(--accent-ink);border-bottom-right-radius:6px}
+.typing{align-self:flex-start;background:#eeeaed;border-radius:18px;padding:11px 14px;display:flex;gap:4px}
+.typing i{width:6px;height:6px;border-radius:50%;background:#9a8f95;animation:blink 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes blink{0%,80%,100%{opacity:.3}40%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.typing i{animation:none}}
+.ph-quick{display:flex;flex-wrap:wrap;gap:6px;padding:8px 10px;border-top:1px solid var(--line);background:#fff;max-height:128px;overflow-y:auto}
+.ph-quick:empty{display:none}
+.ph-quick button{border:1.5px solid var(--accent);color:var(--accent);background:#fff;border-radius:99px;padding:4px 12px;font-size:13.5px;font-weight:600;cursor:pointer}
+.ph-input{display:flex;gap:8px;padding:8px 10px 12px;border-top:1px solid var(--line);background:#fff}
+.ph-input input{flex:1;min-width:0;border:1px solid var(--line);border-radius:99px;padding:8px 14px;background:#f6f3f5}
+.ph-input button{border:0;background:var(--accent);color:var(--accent-ink);border-radius:99px;padding:8px 14px;font-weight:600;cursor:pointer}
+.hint{font-size:13.5px;color:var(--muted);text-align:center;margin:10px auto 0;max-width:380px}
+.owner{display:flex;flex-direction:column;gap:16px;min-width:0}
+.panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px}
+.panel h2{font-family:var(--f-display);font-size:21px;line-height:1.2;margin:0 0 2px}
+.panel .sub{margin:0 0 12px;color:var(--muted);font-size:14px}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.stat{background:var(--accent-soft);border-radius:12px;padding:10px 12px}
+.stat b{display:block;font-family:var(--f-display);font-size:26px;line-height:1.15;font-variant-numeric:tabular-nums}
+.stat span{font-size:13px;color:var(--muted)}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:600px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+th{font-size:12.5px;color:var(--muted);font-weight:600;background:#faf8f9}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+tr.fresh td{background:#e8f6ee}
+.pill{display:inline-block;border-radius:99px;padding:1px 10px;font-size:12.5px;font-weight:600}
+.pill.new{background:#dff3e8;color:#17603f}.pill.packing{background:#fff1d1;color:#7a5200}.pill.done{background:#eceaf0;color:#514a57}
+.rules{display:flex;flex-direction:column;gap:12px}
+.rule label{font-weight:600;font-size:14.5px}
+.rule .trig{font-size:12.5px;color:var(--muted);margin:1px 0 5px}
+.rule textarea{width:100%;min-height:62px;border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:14px;resize:vertical;background:#fdfcfd}
+.honest{font-size:13.5px;color:var(--muted);margin:0}
+.cta{background:var(--bar);color:#f4eef1;border-radius:16px;padding:16px}
+.cta b{display:block;font-size:17px}
+.cta p{margin:2px 0 10px;color:#e2d8de;font-size:14.5px}
+</style>
+</head>
+<body>
+<div class="demobar">
+  <div class="wrap">
+    <div class="db-text"><span class="db-pill" id="dbPill">DEMO</span><span id="dbText"></span></div>
+    <div class="db-controls">
+      <div class="seg" role="group" aria-label="View">
+        <button type="button" id="tabSite" aria-pressed="true"></button>
+        <button type="button" id="tabInbox" aria-pressed="false"></button>
+      </div>
+      <div class="seg" role="group" aria-label="Language">
+        <button type="button" id="lnBn" aria-pressed="true">বাংলা</button>
+        <button type="button" id="lnEn" aria-pressed="false">EN</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="db-note"><div class="wrap" id="dbNote"></div></div>
+
+<main>
+  <div id="viewSite"></div>
+  <div id="viewInbox" class="hide"></div>
+</main>
+
+<div class="cartbar" id="cartbar"><button type="button" id="cartBtn"></button></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle"><div class="sheet-in" id="sheetIn"></div></div>
+
+<script>
+(function(){
+'use strict';
+
+/* ---------- sample catalogs ---------- */
+var KINDS={
+bakery:{
+  name:{en:'Kolpo Bakes',bn:'কল্প বেকস'},
+  tag:{en:'Home-baked cakes and desserts, delivered across Dhaka',bn:'ঘরে বানানো কেক আর ডেজার্ট, ঢাকা জুড়ে ডেলিভারি'},
+  theme:{accent:'#b0245a',soft:'#fbe4ed',tile:'#fde6ee',tile2:'#fff0d6',paper:'#fffafa'},
+  outside:false,minDays:1,
+  cats:[{id:'cake',en:'Cakes',bn:'কেক'},{id:'small',en:'Cupcakes & brownies',bn:'কাপকেক ও ব্রাউনি'},{id:'cookie',en:'Cookies & bread',bn:'কুকিজ ও ব্রেড'},{id:'pitha',en:'Pitha',bn:'পিঠা'}],
+  items:[
+    {id:'truffle',cat:'cake',e:'🎂',p:1400,en:'Chocolate Truffle Cake',bn:'চকলেট ট্রাফল কেক',uen:'1 pound',ubn:'১ পাউন্ড',den:'Dark chocolate ganache, soft sponge',dbn:'ডার্ক চকলেট গানাশ, নরম স্পঞ্জ'},
+    {id:'redvelvet',cat:'cake',e:'🍰',p:1600,en:'Red Velvet Cake',bn:'রেড ভেলভেট কেক',uen:'1 pound',ubn:'১ পাউন্ড',den:'Cream cheese frosting',dbn:'ক্রিম চিজ ফ্রস্টিং'},
+    {id:'custom',cat:'cake',e:'🎉',p:3200,en:'Custom Birthday Cake',bn:'কাস্টম বার্থডে কেক',uen:'2 pounds, from',ubn:'২ পাউন্ড, শুরু',den:'Your theme and message, order 2 days ahead',dbn:'আপনার থিম ও লেখা, ২ দিন আগে অর্ডার'},
+    {id:'cupcake',cat:'small',e:'🧁',p:720,en:'Cupcakes',bn:'কাপকেক',uen:'box of 6',ubn:'৬টার বক্স',den:'Vanilla, chocolate and red velvet mix',dbn:'ভ্যানিলা, চকলেট আর রেড ভেলভেট মিক্স'},
+    {id:'brownie',cat:'small',e:'🍫',p:650,en:'Fudgy Brownies',bn:'ফাজি ব্রাউনি',uen:'box of 8',ubn:'৮টার বক্স',den:'Soft inside, crackly top',dbn:'ভেতরে নরম, উপরে মচমচে'},
+    {id:'cookies',cat:'cookie',e:'🍪',p:480,en:'Butter Cookies',bn:'বাটার কুকিজ',uen:'500 g',ubn:'৫০০ গ্রাম',den:'Classic taste, keeps for 2 weeks',dbn:'ক্লাসিক স্বাদ, ২ সপ্তাহ ভালো থাকে'},
+    {id:'banana',cat:'cookie',e:'🍞',p:450,en:'Banana Bread',bn:'বানানা ব্রেড',uen:'1 loaf',ubn:'১টি লোফ',den:'Walnut topping, no preservatives',dbn:'আখরোট টপিং, কোনো প্রিজারভেটিভ নেই'},
+    {id:'bhapa',cat:'pitha',e:'🍥',p:350,en:'Bhapa Pitha',bn:'ভাপা পিঠা',uen:'10 pieces',ubn:'১০ পিস',den:'Date molasses and coconut, winter special',dbn:'খেজুরের গুড় আর নারকেল, শীতের স্পেশাল'},
+    {id:'patishapta',cat:'pitha',e:'🥞',p:400,en:'Patishapta',bn:'পাটিসাপটা',uen:'8 pieces',ubn:'৮ পিস',den:'Kheer filling',dbn:'ক্ষীরের পুর'}
+  ],
+  delivery:{en:'Delivery inside Dhaka is ৳80. Cakes and pitha go inside Dhaka only, and arrive by the next afternoon.',bn:'ঢাকার ভিতরে ডেলিভারি চার্জ ৳৮০। কেক আর পিঠা শুধু ঢাকার ভিতরে পাঠাই, পরদিন বিকেলের মধ্যে পৌঁছে যায়।'},
+  time:{en:'Ready items arrive the next day. Order custom cakes at least 2 days ahead.',bn:'রেডি আইটেম পরদিন পাবেন। কাস্টম কেক অন্তত ২ দিন আগে অর্ডার দিন।'}
+},
+fashion:{
+  name:{en:'Shuto Studio',bn:'সুতো স্টুডিও'},
+  tag:{en:'Sarees, three-pieces and kurtis, cash on delivery across Bangladesh',bn:'শাড়ি, থ্রি-পিস আর কুর্তি, সারা দেশে ক্যাশ অন ডেলিভারি'},
+  theme:{accent:'#0e6a68',soft:'#dcefed',tile:'#e2f1ef',tile2:'#f5ecdc',paper:'#f8fbfb'},
+  outside:true,minDays:1,
+  cats:[{id:'saree',en:'Sarees',bn:'শাড়ি'},{id:'tp',en:'Three-piece & kurti',bn:'থ্রি-পিস ও কুর্তি'},{id:'modest',en:'Borka & hijab',bn:'বোরকা ও হিজাব'},{id:'kids',en:'Kids',bn:'বাচ্চাদের'}],
+  items:[
+    {id:'jamdani',cat:'saree',e:'🥻',p:6500,en:'Dhakai Jamdani Saree',bn:'ঢাকাই জামদানি শাড়ি',uen:'with blouse piece',ubn:'ব্লাউজ পিস সহ',den:'Handwoven half-silk',dbn:'হাতে বোনা হাফ সিল্ক'},
+    {id:'tangail',cat:'saree',e:'🥻',p:1850,en:'Tangail Cotton Saree',bn:'টাঙ্গাইল সুতি শাড়ি',uen:'6 yards',ubn:'৬ গজ',den:'Soft, for everyday wear',dbn:'নরম, প্রতিদিন পরার জন্য'},
+    {id:'lawn',cat:'tp',e:'👗',p:2450,en:'Lawn Three-Piece',bn:'লন থ্রি-পিস',uen:'unstitched',ubn:'আনস্টিচড',den:'Printed lawn with chiffon dupatta',dbn:'প্রিন্টেড লন, শিফন ওড়না'},
+    {id:'kurti',cat:'tp',e:'👚',p:1350,en:'Embroidered Kurti',bn:'এমব্রয়ডারি কুর্তি',uen:'sizes S to XL',ubn:'সাইজ S থেকে XL',den:'Cotton with hand embroidery',dbn:'সুতি কাপড়, হাতের কাজ'},
+    {id:'borka',cat:'modest',e:'🧕',p:2200,en:'Cherry Borka',bn:'চেরি বোরকা',uen:'sizes 50 to 58',ubn:'সাইজ ৫০ থেকে ৫৮',den:'Light, flowing fabric',dbn:'হালকা ও আরামদায়ক কাপড়'},
+    {id:'hijab',cat:'modest',e:'🧣',p:450,en:'Georgette Hijab',bn:'জর্জেট হিজাব',uen:'1 piece',ubn:'১ পিস',den:'Available in 12 colours',dbn:'১২টি রঙে পাওয়া যায়'},
+    {id:'frock',cat:'kids',e:'👗',p:950,en:'Girls’ Party Frock',bn:'মেয়েদের পার্টি ফ্রক',uen:'ages 2 to 8',ubn:'বয়স ২ থেকে ৮',den:'Net and satin',dbn:'নেট আর সাটিন'},
+    {id:'panjabi',cat:'kids',e:'👕',p:850,en:'Boys’ Panjabi',bn:'ছেলেদের পাঞ্জাবি',uen:'ages 3 to 10',ubn:'বয়স ৩ থেকে ১০',den:'Cotton, festive cut',dbn:'সুতি, উৎসবের ডিজাইন'}
+  ],
+  delivery:{en:'Inside Dhaka ৳80, outside Dhaka ৳150. 1 to 2 days in Dhaka, 2 to 4 days elsewhere, cash on delivery by courier.',bn:'ঢাকার ভিতরে ৳৮০, ঢাকার বাইরে ৳১৫০। ঢাকায় ১-২ দিন, বাইরে ২-৪ দিন লাগে। কুরিয়ারে ক্যাশ অন ডেলিভারি।'},
+  time:{en:'In-stock items ship the next day. Jamdani orders can take 3 days.',bn:'স্টকের পণ্য পরদিন পাঠাই। জামদানি অর্ডারে ৩ দিন লাগতে পারে।'}
+},
+food:{
+  name:{en:'Haari Kitchen',bn:'হাঁড়ি কিচেন'},
+  tag:{en:'Home-cooked meals delivered to your home or office',bn:'ঘরের রান্না, বাসা আর অফিসে ডেলিভারি'},
+  theme:{accent:'#2f6b2a',soft:'#e4efdb',tile:'#fff1c7',tile2:'#e8f2df',paper:'#fbfcf7'},
+  outside:false,minDays:0,
+  cats:[{id:'rice',en:'Biryani & khichuri',bn:'বিরিয়ানি ও খিচুড়ি'},{id:'curry',en:'Curries',bn:'তরকারি'},{id:'frozen',en:'Frozen snacks',bn:'ফ্রোজেন'},{id:'sweet',en:'Desserts',bn:'ডেজার্ট'}],
+  items:[
+    {id:'kacchi',cat:'rice',e:'🍛',p:420,en:'Mutton Kacchi Biryani',bn:'মাটন কাচ্চি বিরিয়ানি',uen:'1 plate',ubn:'১ প্লেট',den:'With borhani and salad',dbn:'বোরহানি আর সালাদ সহ'},
+    {id:'tehari',cat:'rice',e:'🍚',p:280,en:'Beef Tehari',bn:'বিফ তেহারি',uen:'1 plate',ubn:'১ প্লেট',den:'Old Dhaka style',dbn:'পুরান ঢাকার স্বাদ'},
+    {id:'khichuri',cat:'rice',e:'🥘',p:200,en:'Bhuna Khichuri with Egg',bn:'ডিম ভুনা খিচুড়ি',uen:'1 plate',ubn:'১ প্লেট',den:'Made for rainy days',dbn:'বৃষ্টির দিনের জন্য সেরা'},
+    {id:'roast',cat:'curry',e:'🍗',p:180,en:'Chicken Roast',bn:'চিকেন রোস্ট',uen:'1 piece',ubn:'১ পিস',den:'Wedding-style, rich gravy',dbn:'বিয়েবাড়ির স্বাদ'},
+    {id:'beef',cat:'curry',e:'🍖',p:650,en:'Beef Bhuna',bn:'গরুর মাংস ভুনা',uen:'half kg',ubn:'হাফ কেজি',den:'Slow-cooked in mustard oil',dbn:'সরিষার তেলে ধীরে রান্না'},
+    {id:'samosa',cat:'frozen',e:'🥟',p:300,en:'Frozen Chicken Samosa',bn:'ফ্রোজেন চিকেন সমুচা',uen:'12 pieces',ubn:'১২ পিস',den:'Fry straight from the freezer',dbn:'ফ্রিজ থেকে বের করেই ভাজুন'},
+    {id:'nuggets',cat:'frozen',e:'🍤',p:420,en:'Frozen Chicken Nuggets',bn:'ফ্রোজেন চিকেন নাগেট',uen:'500 g',ubn:'৫০০ গ্রাম',den:'No added colour',dbn:'কোনো রং মেশানো নেই'},
+    {id:'firni',cat:'sweet',e:'🍮',p:120,en:'Shahi Firni',bn:'শাহী ফিরনি',uen:'1 bowl',ubn:'১ বাটি',den:'Rose and pistachio',dbn:'গোলাপ আর পেস্তা'}
+  ],
+  delivery:{en:'Inside Dhaka ৳80. Order lunch by 10 am and it arrives by 1 pm. We don’t send cooked food outside Dhaka.',bn:'ঢাকার ভিতরে ৳৮০। দুপুরের খাবার সকাল ১০টার মধ্যে অর্ডার দিলে ১টার মধ্যে পৌঁছায়। রান্না করা খাবার ঢাকার বাইরে পাঠাই না।'},
+  time:{en:'Lunch arrives the same day if you order by 10 am. Frozen items arrive the next day.',bn:'সকাল ১০টার মধ্যে অর্ডার দিলে দুপুরের খাবার সেদিনই পাবেন। ফ্রোজেন আইটেম পরদিন।'}
+},
+beauty:{
+  name:{en:'Komol Care',bn:'কোমল কেয়ার'},
+  tag:{en:'Skincare and makeup, delivered in Dhaka and nationwide',bn:'স্কিন কেয়ার আর মেকআপ, ঢাকা ও সারা দেশে ডেলিভারি'},
+  theme:{accent:'#7b3b9e',soft:'#efe3f7',tile:'#f5e9fb',tile2:'#fde6ee',paper:'#fdfaff'},
+  outside:true,minDays:1,
+  cats:[{id:'skin',en:'Skincare',bn:'স্কিন কেয়ার'},{id:'makeup',en:'Makeup & mehedi',bn:'মেকআপ ও মেহেদি'},{id:'hair',en:'Hair care',bn:'চুলের যত্ন'}],
+  items:[
+    {id:'sunscreen',cat:'skin',e:'🧴',p:850,en:'Sunscreen SPF 50',bn:'সানস্ক্রিন SPF 50',uen:'50 ml',ubn:'৫০ মিলি',den:'Light gel, no white cast',dbn:'হালকা জেল, সাদা ভাব পড়ে না'},
+    {id:'facewash',cat:'skin',e:'🫧',p:550,en:'Gentle Face Wash',bn:'জেন্টল ফেস ওয়াশ',uen:'100 ml',ubn:'১০০ মিলি',den:'For oily and combination skin',dbn:'তৈলাক্ত ও মিশ্র ত্বকের জন্য'},
+    {id:'serum',cat:'skin',e:'💧',p:950,en:'Vitamin C Serum',bn:'ভিটামিন সি সিরাম',uen:'30 ml',ubn:'৩০ মিলি',den:'For daily use',dbn:'প্রতিদিন ব্যবহারের জন্য'},
+    {id:'aloe',cat:'skin',e:'🌿',p:450,en:'Aloe Vera Gel',bn:'অ্যালোভেরা জেল',uen:'300 ml',ubn:'৩০০ মিলি',den:'Cooling after time in the sun',dbn:'রোদের পরে ঠান্ডা আরাম'},
+    {id:'tint',cat:'makeup',e:'💄',p:350,en:'Lip and Cheek Tint',bn:'লিপ অ্যান্ড চিক টিন্ট',uen:'4 shades',ubn:'৪টি শেড',den:'Long-lasting colour',dbn:'অনেকক্ষণ রং থাকে'},
+    {id:'kajal',cat:'makeup',e:'👁️',p:280,en:'Smudge-proof Kajal',bn:'স্মাজ-প্রুফ কাজল',uen:'1 pencil',ubn:'১টি পেন্সিল',den:'Stays all day',dbn:'সারাদিন থাকে'},
+    {id:'mehedi',cat:'makeup',e:'🌸',p:250,en:'Mehedi Cones',bn:'মেহেদি কোন',uen:'pack of 6',ubn:'৬টার প্যাক',den:'Natural, dark stain',dbn:'প্রাকৃতিক, গাঢ় রং'},
+    {id:'hairoil',cat:'hair',e:'🫙',p:400,en:'Herbal Hair Oil',bn:'হারবাল হেয়ার অয়েল',uen:'200 ml',ubn:'২০০ মিলি',den:'Amla, bhringraj and coconut',dbn:'আমলকী, ভৃঙ্গরাজ আর নারকেল'}
+  ],
+  delivery:{en:'Inside Dhaka ৳80, outside Dhaka ৳150. 1 to 2 days in Dhaka, 2 to 4 days elsewhere.',bn:'ঢাকার ভিতরে ৳৮০, ঢাকার বাইরে ৳১৫০। ঢাকায় ১-২ দিন, বাইরে ২-৪ দিন লাগে।'},
+  time:{en:'We ship the day after you order.',bn:'অর্ডারের পরদিন পাঠাই।'}
+},
+gifts:{
+  name:{en:'Kantha & Co.',bn:'কাঁথা অ্যান্ড কোং'},
+  tag:{en:'Handmade jewellery, gifts and home decor',bn:'হাতে বানানো গয়না, উপহার আর ঘর সাজানোর জিনিস'},
+  theme:{accent:'#1f5aa6',soft:'#e2ebf8',tile:'#e6eefa',tile2:'#fbefdb',paper:'#fafbfe'},
+  outside:true,minDays:1,
+  cats:[{id:'jewel',en:'Jewellery',bn:'গয়না'},{id:'gift',en:'Gifts',bn:'উপহার'},{id:'decor',en:'Home decor',bn:'ঘর সাজানো'}],
+  items:[
+    {id:'earring',cat:'jewel',e:'💍',p:350,en:'Terracotta Earrings',bn:'টেরাকোটা কানের দুল',uen:'1 pair',ubn:'১ জোড়া',den:'Hand-painted clay',dbn:'হাতে রং করা মাটির দুল'},
+    {id:'necklace',cat:'jewel',e:'📿',p:850,en:'Oxidised Necklace Set',bn:'অক্সিডাইজড নেকলেস সেট',uen:'with earrings',ubn:'দুল সহ',den:'Lightweight, made for festivals',dbn:'হালকা, উৎসবের জন্য'},
+    {id:'hamper',cat:'gift',e:'🎁',p:2500,en:'Birthday Gift Hamper',bn:'বার্থডে গিফট হ্যাম্পার',uen:'custom box',ubn:'কাস্টম বক্স',den:'Chocolates, candle, card and a keepsake',dbn:'চকলেট, মোমবাতি, কার্ড আর একটা স্মারক'},
+    {id:'candle',cat:'gift',e:'🕯️',p:450,en:'Scented Jar Candle',bn:'সুগন্ধি জার মোমবাতি',uen:'200 g',ubn:'২০০ গ্রাম',den:'Jasmine or vanilla',dbn:'বেলি অথবা ভ্যানিলা'},
+    {id:'keyring',cat:'gift',e:'🔑',p:250,en:'Name Resin Keyring',bn:'নামসহ রেজিন কি-রিং',uen:'1 piece',ubn:'১ পিস',den:'Any name, with dried flowers',dbn:'যেকোনো নাম, শুকনো ফুল দিয়ে'},
+    {id:'cushion',cat:'decor',e:'🛋️',p:900,en:'Nakshi Kantha Cushion Cover',bn:'নকশি কাঁথা কুশন কভার',uen:'16 x 16 inch',ubn:'১৬ x ১৬ ইঞ্চি',den:'Hand-stitched',dbn:'হাতে সেলাই করা'},
+    {id:'planter',cat:'decor',e:'🪴',p:550,en:'Painted Clay Planter',bn:'রং করা মাটির টব',uen:'medium',ubn:'মাঝারি',den:'With a drainage hole',dbn:'পানি বের হওয়ার ছিদ্র সহ'},
+    {id:'jute',cat:'decor',e:'🧶',p:750,en:'Jute Wall Hanging',bn:'পাটের ওয়াল হ্যাংগিং',uen:'2 feet',ubn:'২ ফুট',den:'Natural jute and beads',dbn:'প্রাকৃতিক পাট আর পুঁতি'}
+  ],
+  delivery:{en:'Inside Dhaka ৳80, outside Dhaka ৳150. 1 to 2 days in Dhaka, 2 to 4 days elsewhere.',bn:'ঢাকার ভিতরে ৳৮০, ঢাকার বাইরে ৳১৫০। ঢাকায় ১-২ দিন, বাইরে ২-৪ দিন লাগে।'},
+  time:{en:'Ready items ship the next day. Personalised items take 2 to 3 days.',bn:'রেডি আইটেম পরদিন পাঠাই। নাম লেখা জিনিসে ২-৩ দিন লাগে।'}
+}};
+var KIND_IDS=['bakery','fashion','food','beauty','gifts'];
+var AREAS=[
+  {id:'dhanmondi',en:'Dhanmondi',bn:'ধানমন্ডি'},{id:'mirpur',en:'Mirpur',bn:'মিরপুর'},{id:'uttara',en:'Uttara',bn:'উত্তরা'},
+  {id:'gulshan',en:'Gulshan',bn:'গুলশান'},{id:'banani',en:'Banani',bn:'বনানী'},{id:'mohammadpur',en:'Mohammadpur',bn:'মোহাম্মদপুর'},
+  {id:'bashundhara',en:'Bashundhara',bn:'বসুন্ধরা'},{id:'badda',en:'Badda',bn:'বাড্ডা'},{id:'motijheel',en:'Motijheel',bn:'মতিঝিল'},
+  {id:'olddhaka',en:'Old Dhaka',bn:'পুরান ঢাকা'},{id:'otherdhaka',en:'Other area in Dhaka',bn:'ঢাকার অন্য এলাকা'},
+  {id:'outside',en:'Outside Dhaka',bn:'ঢাকার বাইরে',out:true}
+];
+var CHAT_AREAS=['dhanmondi','mirpur','uttara','gulshan','mohammadpur','bashundhara','otherdhaka','outside'];
+var FEE_IN=80, FEE_OUT=150;
+
+/* ---------- words ---------- */
+var T={
+bn:{
+  demoBy:'নমুনা শপ · বানিয়েছেন Nobo Ishraque',
+  demoFor:function(n){return n+'-এর জন্য বানানো ফ্রি নমুনা · Nobo Ishraque'},
+  demoNote:'পণ্য, দাম আর ছবি নমুনা মাত্র। আসল সাইটে থাকবে আপনার পণ্য, দাম আর ছবি।',
+  tabSite:'ওয়েবসাইট',tabInbox:'ইনবক্স অটোপাইলট',
+  seeItems:'পণ্য দেখুন',ask:'WhatsApp-এ প্রশ্ন করুন',
+  askText:function(n){return 'আসসালামু আলাইকুম, '+n+'-এর কাছে একটা প্রশ্ন ছিল।'},
+  cod:'ক্যাশ অন ডেলিভারি',mfs:'বিকাশ / নগদ',inDhaka:'ঢাকা জুড়ে ডেলিভারি',nation:'সারা দেশে ডেলিভারি',
+  itemsT:'আমাদের পণ্য',all:'সব',add:'যোগ করুন',dec:'একটা কমান',inc:'একটা বাড়ান',
+  count:function(n){return num(n)+'টি পণ্য'},orderNow:'অর্ডার করুন',
+  howT:'কিভাবে অর্ডার করবেন',how:['পছন্দের পণ্য যোগ করুন','নাম আর ঠিকানা দিয়ে WhatsApp-এ পাঠান','শপ ফোনে কনফার্ম করে পৌঁছে দেবে'],
+  infoT:'ডেলিভারি ও পেমেন্ট',deliveryT:'ডেলিভারি',paymentT:'পেমেন্ট',
+  faqT:'সাধারণ প্রশ্ন',
+  faq:[['ডেলিভারি চার্জ কত?','delivery'],['কিভাবে পেমেন্ট করব?','payment'],['কতদিনে পাব?','time'],['পণ্যে সমস্যা থাকলে কী করব?','returns']],
+  returns:'ছবি তুলে ২৪ ঘণ্টার মধ্যে জানান। পণ্য বদলে দেব অথবা টাকা ফেরত দেব।',
+  creditT:'এই নমুনা সাইটটা বানিয়েছি আমি, Nobo Ishraque',
+  credit:'আমি ঢাকার একজন ওয়েব ডিজাইনার। আপনার শপের জন্য এরকম সাইট ৩-৪ দিনে বানিয়ে দিতে পারি। প্রতিটা পণ্যে থাকবে WhatsApp অর্ডার বাটন, আর সাইট মোবাইলে দ্রুত খুলবে।',
+  talk:'WhatsApp-এ আমাকে মেসেজ দিন',work:'আমার আরও কাজ দেখুন',
+  talkText:function(n,p){return p?'হ্যালো Nobo, '+n+'-এর ডেমোটা দেখলাম। আরও জানতে চাই।':'হ্যালো Nobo, আপনার শপ ডেমোটা দেখলাম। আমার শপের জন্য এরকম কিছু চাই।'},
+  sheetT:'আপনার অর্ডার',empty:'এখনো কিছু যোগ করেননি।',close:'বন্ধ করুন',
+  fName:'আপনার নাম',fPhone:'মোবাইল নম্বর',fArea:'এলাকা',fAddr:'পুরো ঠিকানা',fAddrPh:'বাসা, রোড, এলাকা',fDate:'ডেলিভারির দিন',fPay:'পেমেন্ট',fNote:'নোট (ইচ্ছা হলে)',fNotePh:'যেমন: বিকেল ৪টার পরে দেবেন',
+  payCod:'ক্যাশ অন ডেলিভারি',payMfs:'বিকাশ / নগদে আগে',
+  sub:'পণ্যের দাম',fee:'ডেলিভারি চার্জ',total:'মোট',
+  preview:'WhatsApp-এ যে মেসেজটা যাবে',send:'WhatsApp-এ অর্ডার পাঠান',copy:'মেসেজ কপি করুন',copied:'কপি হয়েছে',
+  waNote:'ডেমোতে WhatsApp খুলে চ্যাট বেছে নিতে বলবে। আসল সাইটে অর্ডার সরাসরি শপের নম্বরে যায়।',
+  eName:'নাম লিখুন।',ePhone:'১১ সংখ্যার মোবাইল নম্বর দিন, যেমন 017XXXXXXXX।',eAddr:'পুরো ঠিকানা লিখুন।',
+  inOnly:'এই শপ শুধু ঢাকার ভিতরে ডেলিভারি দেয়।',
+  msgHead:function(n){return 'আসসালামু আলাইকুম, '+n+'-এ অর্ডার করতে চাই:'},
+  mName:'নাম',mPhone:'ফোন',mArea:'এলাকা',mAddr:'ঠিকানা',mDate:'ডেলিভারির দিন',mPay:'পেমেন্ট',mNote:'নোট',
+  awayT:'দোকান বন্ধের সময় দেখুন',reset:'চ্যাট আবার শুরু',online:'সাধারণত সাথে সাথে উত্তর দেয়',offline:'এখন বন্ধ, অটো উত্তর চালু',
+  ph:'মেসেজ লিখুন…',sendBtn:'পাঠান',
+  hint:'লিখেও দেখুন: "dam koto?", "ডেলিভারি চার্জ কত", "bkash e dibo", "কেক আছে?"',
+  greet:function(n){return 'আসসালামু আলাইকুম! '+n+'-এ স্বাগতম। কী জানতে চান? নিচের বাটন চাপুন, অথবা লিখে জিজ্ঞেস করুন।'},
+  awayMsg:function(n){return 'আসসালামু আলাইকুম! '+n+' এখন বন্ধ, সকাল ১০টায় খুলবে। তবে দাম আর ডেলিভারি জানা, আর অর্ডার দেওয়া এখনই এখানে করতে পারবেন।'},
+  payment:'ক্যাশ অন ডেলিভারি আছে। চাইলে বিকাশ বা নগদে আগে পেমেন্ট করতে পারেন। কাস্টম অর্ডারে ৫০% অ্যাডভান্স লাগে।',
+  human:function(a){return a?'ঠিক আছে, অ্যাডমিনকে জানিয়ে রাখলাম। সকাল ১০টার পর উনি নিজে উত্তর দেবেন।':'ঠিক আছে, অ্যাডমিনকে জানালাম। সাধারণত ১৫ মিনিটের মধ্যে উত্তর দেন।'},
+  fallback:'এই প্রশ্নের উত্তর আমার কাছে নেই, তাই অ্যাডমিনকে জানিয়ে দিলাম। এর মধ্যে নিচের বাটনগুলো দেখতে পারেন।',
+  priceHead:'আমাদের দাম:',priceTail:'পুরো লিস্ট আমাদের ওয়েবসাইটে আছে। অর্ডার দিতে "অর্ডার করব" চাপুন।',
+  itemReply:function(n,u,p,d){return n+' ('+u+'): '+p+'। '+d+'। নিতে চাইলে "অর্ডার করব" চাপুন।'},
+  multi:'এগুলো আছে:',
+  q:{price:'দাম ও মেনু',delivery:'ডেলিভারি চার্জ',payment:'পেমেন্ট',order:'অর্ডার করব',time:'কতদিন লাগবে',human:'মানুষের সাথে কথা'},
+  askProduct:'কোনটা নিতে চান?',askQty:function(n){return n+' কয়টা লাগবে?'},askArea:'কোন এলাকায় ডেলিভারি?',
+  askAddr:'পুরো ঠিকানা লিখুন (বাসা, রোড, এলাকা)।',badAddr:'আরেকটু বিস্তারিত ঠিকানা দিন, যেমন: বাসা ১২, রোড ৫, ধানমন্ডি।',
+  askPhone:'আপনার মোবাইল নম্বর দিন।',badPhone:'নম্বরটা ঠিক মনে হচ্ছে না। ১১ সংখ্যার নম্বর দিন, যেমন 017XXXXXXXX।',
+  badQty:'১ থেকে ২০ এর মধ্যে একটা সংখ্যা লিখুন।',pick:'নিচের একটা বাটন বেছে নিন।',outNo:'দুঃখিত, এই শপ ঢাকার বাইরে ডেলিভারি দেয় না। ঢাকার একটা এলাকা বেছে নিন।',
+  summary:function(o){return 'অর্ডারটা দেখে নিন:\n'+o.item+' × '+o.qty+'\nএলাকা: '+o.area+'\nঠিকানা: '+o.addr+'\nফোন: '+o.phone+'\nডেলিভারি চার্জ: '+o.fee+'\nমোট: '+o.total+'\nপেমেন্ট: ক্যাশ অন ডেলিভারি'},
+  yes:'কনফার্ম',no:'বাতিল',
+  done:function(id,t){return 'অর্ডার কনফার্ম! অর্ডার নং #'+id+', মোট '+t+' (ডেলিভারি সহ)। পাঠানোর আগে আমরা ফোন করব। ধন্যবাদ!'},
+  cancelled:'ঠিক আছে, অর্ডার বাতিল করলাম। আর কিছু জানতে চাইলে নিচের বাটন চাপুন।',
+  stReplies:'অটো উত্তর',stOrders:'নতুন অর্ডার',stSaved:'সময় বাঁচল',mins:function(n){return '~'+num(n)+' মি.'},
+  ownerT:'শপের মালিক যা পান',ownerSub:'কাস্টমার রাত ২টায় মেসেজ দিলেও উত্তর যায়, আর অর্ডার জমা হয় শিটে।',
+  sheetTT:'অর্ডার শিট',sheetSub:'বট যে অর্ডার নেয়, সেটা নিজে থেকেই এই শিটে উঠে যায়। প্রথম দুটো সারি উদাহরণ।',
+  cols:['#','সময়','পণ্য','পরিমাণ','এলাকা','ফোন','মোট','অবস্থা'],
+  st:{done:'ডেলিভারড',packing:'প্যাক হচ্ছে','new':'নতুন'},
+  rulesT:'অটো উত্তর সেটআপ',rulesSub:'যেকোনো উত্তর বদলে দেখুন, তারপর চ্যাটে সেই প্রশ্নটা করুন।',
+  rl:{greet:'স্বাগত মেসেজ',away:'দোকান বন্ধের মেসেজ',delivery:'ডেলিভারি',payment:'পেমেন্ট',time:'কতদিন লাগবে'},
+  trigGreet:'চালু হয়: কেউ চ্যাট খুললে',trigAway:'চালু হয়: দোকান বন্ধ থাকার সময় কেউ চ্যাট খুললে',trigWords:'চালু হয় এই শব্দগুলোতে: ',
+  priceRule:'"দাম ও মেনু" উত্তরটা আপনার পণ্যের লিস্ট থেকে নিজে তৈরি হয়।',
+  honest:'অটো উত্তর চলে Meta Business Suite-এর ফ্রি অটোমেশনে, এর কোনো মাসিক খরচ নেই। অর্ডার বট আর শিট চলে ManyChat দিয়ে, যার মাসিক ফি আছে।',
+  ctaT:'আপনার পেজে এটা চালু করতে চান?',cta:'আপনার আসল প্রশ্ন, উত্তর আর পণ্য দিয়ে আমি এটা সেটআপ করে দেব। Nobo'
+},
+en:{
+  demoBy:'Sample shop by Nobo Ishraque',
+  demoFor:function(n){return 'Free sample made for '+n+' by Nobo Ishraque'},
+  demoNote:'Products, prices and pictures are samples. Your real site shows your own products, prices and photos.',
+  tabSite:'Website',tabInbox:'Inbox autopilot',
+  seeItems:'See products',ask:'Ask on WhatsApp',
+  askText:function(n){return 'Hi '+n+', I have a question.'},
+  cod:'Cash on delivery',mfs:'bKash / Nagad',inDhaka:'Delivery across Dhaka',nation:'Delivery across Bangladesh',
+  itemsT:'Our products',all:'All',add:'Add',dec:'Remove one',inc:'Add one',
+  count:function(n){return n+(n===1?' item':' items')},orderNow:'Order now',
+  howT:'How to order',how:['Add what you like','Send it on WhatsApp with your name and address','The shop confirms by phone and delivers'],
+  infoT:'Delivery and payment',deliveryT:'Delivery',paymentT:'Payment',
+  faqT:'Common questions',
+  faq:[['How much is delivery?','delivery'],['How do I pay?','payment'],['When will it arrive?','time'],['What if something is wrong?','returns']],
+  returns:'Send us a photo within 24 hours. We’ll replace it or refund you.',
+  creditT:'I made this sample site: Nobo Ishraque',
+  credit:'I\u2019m a web designer in Dhaka. I can build a site like this for your shop in 3 to 4 days, with a WhatsApp order button on every product and fast loading on phones.',
+  talk:'Message me on WhatsApp',work:'See more of my work',
+  talkText:function(n,p){return p?'Hi Nobo, I saw the demo for '+n+'. I\u2019d like to know more.':'Hi Nobo, I saw your shop demo. I\u2019d like something like this for my shop.'},
+  sheetT:'Your order',empty:'Nothing added yet.',close:'Close',
+  fName:'Your name',fPhone:'Mobile number',fArea:'Area',fAddr:'Full address',fAddrPh:'House, road, area',fDate:'Delivery day',fPay:'Payment',fNote:'Note (optional)',fNotePh:'For example: deliver after 4 pm',
+  payCod:'Cash on delivery',payMfs:'bKash / Nagad in advance',
+  sub:'Items',fee:'Delivery',total:'Total',
+  preview:'The message that goes to WhatsApp',send:'Send order on WhatsApp',copy:'Copy message',copied:'Copied',
+  waNote:'In this demo, WhatsApp asks you to pick a chat. On the real site, the order goes straight to the shop’s number.',
+  eName:'Enter your name.',ePhone:'Enter an 11-digit mobile number, like 017XXXXXXXX.',eAddr:'Enter your full address.',
+  inOnly:'This shop delivers inside Dhaka only.',
+  msgHead:function(n){return 'Hi '+n+', I’d like to order:'},
+  mName:'Name',mPhone:'Phone',mArea:'Area',mAddr:'Address',mDate:'Delivery day',mPay:'Payment',mNote:'Note',
+  awayT:'Show after-hours mode',reset:'Restart chat',online:'Usually replies instantly',offline:'Closed now, auto-replies on',
+  ph:'Type a message…',sendBtn:'Send',
+  hint:'Try typing: "price?", "delivery charge koto", "can I pay by bkash", "do you have cake?"',
+  greet:function(n){return 'Hi! Welcome to '+n+'. What would you like to know? Tap a button below or type your question.'},
+  awayMsg:function(n){return 'Hi! '+n+' is closed right now and opens at 10 am. You can still check prices and delivery, and place an order right here.'},
+  payment:'Cash on delivery is available. You can also pay first by bKash or Nagad. Custom orders need a 50% advance.',
+  human:function(a){return a?'Okay, I’ve let the admin know. They’ll reply personally after 10 am.':'Okay, I’ve let the admin know. They usually reply within 15 minutes.'},
+  fallback:'I don’t have the answer to that, so I’ve passed it to the admin. Meanwhile, the buttons below might help.',
+  priceHead:'Our prices:',priceTail:'The full list is on our website. Tap "Order" to place an order.',
+  itemReply:function(n,u,p,d){return n+' ('+u+'): '+p+'. '+d+'. Tap "Order" to get it.'},
+  multi:'Here’s what we have:',
+  q:{price:'Prices & menu',delivery:'Delivery charge',payment:'Payment',order:'Order',time:'How long?',human:'Talk to a person'},
+  askProduct:'Which one would you like?',askQty:function(n){return 'How many '+n+'?'},askArea:'Which area should we deliver to?',
+  askAddr:'Type your full address (house, road, area).',badAddr:'Please add a bit more detail, like: House 12, Road 5, Dhanmondi.',
+  askPhone:'What’s your mobile number?',badPhone:'That number doesn’t look right. Enter 11 digits, like 017XXXXXXXX.',
+  badQty:'Type a number from 1 to 20.',pick:'Pick one of the buttons below.',outNo:'Sorry, this shop doesn’t deliver outside Dhaka. Pick an area in Dhaka.',
+  summary:function(o){return 'Please check your order:\n'+o.item+' × '+o.qty+'\nArea: '+o.area+'\nAddress: '+o.addr+'\nPhone: '+o.phone+'\nDelivery: '+o.fee+'\nTotal: '+o.total+'\nPayment: cash on delivery'},
+  yes:'Confirm',no:'Cancel',
+  done:function(id,t){return 'Order confirmed! Order #'+id+', total '+t+' including delivery. We’ll call before sending it. Thank you!'},
+  cancelled:'Okay, I’ve cancelled that order. Tap a button below if you need anything else.',
+  stReplies:'Auto-replies',stOrders:'New orders',stSaved:'Time saved',mins:function(n){return '~'+n+' min'},
+  ownerT:'What the shop owner gets',ownerSub:'Customers get answers even at 2 am, and orders land in a sheet.',
+  sheetTT:'Order sheet',sheetSub:'Orders the bot takes go into this sheet on their own. The first two rows are examples.',
+  cols:['#','Time','Item','Qty','Area','Phone','Total','Status'],
+  st:{done:'Delivered',packing:'Packing','new':'New'},
+  rulesT:'Auto-reply setup',rulesSub:'Change any reply, then ask that question in the chat.',
+  rl:{greet:'Welcome message',away:'After-hours message',delivery:'Delivery',payment:'Payment',time:'How long'},
+  trigGreet:'Runs when: someone opens the chat',trigAway:'Runs when: someone opens the chat after hours',trigWords:'Runs on these words: ',
+  priceRule:'The "Prices & menu" reply is built from your product list automatically.',
+  honest:'Auto-replies run on Meta Business Suite’s free automations, with no monthly cost. The order bot and sheet run on ManyChat, which has a monthly fee.',
+  ctaT:'Want this on your page?',cta:'I\u2019ll set it up with your real questions, answers and products. Nobo'
+}};
+
+/* ---------- typed-message intents (Bangla, Banglish, English) ---------- */
+var INTENTS={
+  delivery:['ডেলিভারি','delivery','deliveri','dilivery','charge','চার্জ','কুরিয়ার','courier','পাঠাবেন','pathaben','outside','বাইরে','baire','home delivery','shipping'],
+  payment:['বিকাশ','bkash','bikash','নগদ','nagad','পেমেন্ট','payment','pay','ক্যাশ','cash','cod','অ্যাডভান্স','advance','রকেট','rocket'],
+  time:['কবে','kobe','সময়','somoy','time','কতদিন','koto din','কত দিন','ready','রেডি','কখন','kokhon','when','how long','লাগবে','lagbe'],
+  order:['অর্ডার','order','নিব','নেব','nibo','নিতে চাই','কিনব','kinbo','buy','book','বুক'],
+  human:['মানুষ','admin','অ্যাডমিন','কথা বল','call','কল','ফোন দিন','human','agent','owner'],
+  price:['দাম','dam','daam','price','প্রাইস','মেনু','menu','rate','রেট','koto','কত','how much','list','লিস্ট'],
+  greet:['hi','hello','hey','salam','সালাম','হাই','হ্যালো','assalamu','আসসালামু']
+};
+var WEAK=['কত','koto','lagbe','লাগবে','taka','টাকা','time'];
+var INTENT_ORDER=['delivery','payment','order','human','time','price','greet'];
+var STOP=['with','and','the','box','pieces','from','সহ','আর','frozen'];
+
+/* ---------- state ---------- */
+var S={lang:'bn',view:'site',kind:'bakery',name:null,slug:'',cart:{},cat:'all',form:null,tried:false,
+  orders:[],nextId:1043,replies:0,chat:[],quick:[],typing:false,flow:null,away:false,edits:{},gen:0,ignoreHash:false};
+var busy=Promise.resolve();
+var DELAY=550;
+
+function save(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+function read(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function $(id){return document.getElementById(id)}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+var BN='০১২৩৪৫৬৭৮৯';
+function num(n){var s=Number(n).toLocaleString('en-IN');return S.lang==='bn'?s.replace(/\d/g,function(d){return BN[d]}):s}
+function toLatin(s){return String(s).replace(/[০-৯]/g,function(d){return BN.indexOf(d)})}
+function tk(n){return '৳'+num(n)}
+function K(){return KINDS[S.kind]}
+function W(){return T[S.lang]}
+function L(o){return o[S.lang]}
+function shop(){return (S.lang==='bn'&&S.nameBn)||S.name||S.nameBn||K().name[S.lang]}
+var NOBO_WA='8801720050130', NOBO_SITE='https://noboishraque.github.io/';
+function contactBtns(){var w=W();return '<div class="credit-actions"><a class="btn wa sm" target="_blank" rel="noopener" href="https://wa.me/'+NOBO_WA+'?text='+encodeURIComponent(w.talkText(shop(),S.pitch))+'">'+esc(w.talk)+'</a><a class="btn ghost sm" target="_blank" rel="noopener" href="'+NOBO_SITE+'">'+esc(w.work)+'</a></div>'}
+function iname(it){return S.lang==='bn'?it.bn:it.en}
+function iunit(it){return S.lang==='bn'?it.ubn:it.uen}
+function idesc(it){return S.lang==='bn'?it.dbn:it.den}
+function itemById(id){var a=K().items;for(var i=0;i<a.length;i++)if(a[i].id===id)return a[i];return null}
+function area(id){for(var i=0;i<AREAS.length;i++)if(AREAS[i].id===id)return AREAS[i];return AREAS[0]}
+function areaName(id){return L(area(id))}
+function feeOf(id){return area(id).out?FEE_OUT:FEE_IN}
+function areasAllowed(){return AREAS.filter(function(a){return !a.out||K().outside})}
+function initials(n){var w=String(n).replace(/[^A-Za-z0-9ঀ-৿ ]/g,' ').trim().split(/\s+/);return ((w[0]||'Q').charAt(0)+(w[1]?w[1].charAt(0):'')).toUpperCase()}
+function pad(n){return String(n).padStart(2,'0')}
+function ymd(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
+function dateLabel(v){try{var p=v.split('-');var d=new Date(+p[0],p[1]-1,+p[2]);if(isNaN(d))return v;return d.toLocaleDateString(S.lang==='bn'?'bn-BD':'en-GB',{weekday:'long',day:'numeric',month:'long'})}catch(e){return v}}
+function clock(d){var h=d.getHours(),m=d.getMinutes();var s=pad(h)+':'+pad(m);return S.lang==='bn'?s.replace(/\d/g,function(x){return BN[x]}):s}
+function normPhone(s){var d=toLatin(s).replace(/\D/g,'');if(/^8801\d{9}$/.test(d))d=d.slice(2);return /^01[3-9]\d{8}$/.test(d)?d:null}
+function mask(p){return p.slice(0,3)+'•••'+p.slice(-3)}
+
+/* ---------- link handling: #[inbox-]<kind>[-shop-name] ---------- */
+function slugToName(s){return s.replace(/--/g,"'").split('-').filter(Boolean).map(function(w){return w==='bd'?'BD':w.charAt(0).toUpperCase()+w.slice(1)}).join(' ')}
+function parseLink(){
+  var q={};
+  try{new URLSearchParams(location.search).forEach(function(v,k){q[k.toLowerCase()]=v})}catch(e){}
+  var h=(location.hash||'').slice(1).toLowerCase(),view='site',kind='bakery',name=null,nameBn=null,pitch=false;
+  try{h=decodeURIComponent(h)}catch(e){}
+  if(/^inbox(-|$)/.test(h)){view='inbox';h=h.replace(/^inbox-?/,'')}
+  /* older links kept everything in the hash: #[inbox-]<type>[-shop-name] */
+  var m=h.match(/^(bakery|fashion|food|beauty|gifts)(?:-(.*))?$/);
+  if(m){kind=m[1];var sl=(m[2]||'').replace(/[^a-z0-9-]/g,'');if(sl){name=slugToName(sl);pitch=true}}
+  var t=(q.type||'').toLowerCase();if(KINDS[t])kind=t;
+  if(q['for']){name=q['for'].slice(0,60);pitch=true}
+  else if(q.shop){name=q.shop.slice(0,60)}
+  if(q.bn){nameBn=q.bn.slice(0,60);if(!name)pitch=!!q['for']}
+  if(name&&/[ঀ-৿]/.test(name)&&!/[A-Za-z]/.test(name)){nameBn=nameBn||name}
+  return {view:view,kind:kind,name:name,nameBn:nameBn,pitch:pitch};
+}
+function writeHash(){
+  try{history.replaceState(null,'',location.pathname+location.search+(S.view==='inbox'?'#inbox':''))}catch(e){}
+}
+
+/* ---------- theme + bar ---------- */
+function applyTheme(){
+  var t=K().theme,r=document.documentElement.style;
+  r.setProperty('--accent',t.accent);r.setProperty('--accent-soft',t.soft);r.setProperty('--tile',t.tile);r.setProperty('--tile2',t.tile2);r.setProperty('--paper',t.paper);
+  document.documentElement.lang=S.lang;
+  document.title=(S.name?shop()+' · ':'')+'Shop Website Demo · Nobo Ishraque';
+}
+function renderBar(){
+  var w=W();
+  $('dbText').textContent=S.pitch?w.demoFor(shop()):w.demoBy;
+  $('dbNote').textContent=w.demoNote;
+  $('tabSite').textContent=w.tabSite;$('tabInbox').textContent=w.tabInbox;
+  $('tabSite').setAttribute('aria-pressed',S.view==='site');$('tabInbox').setAttribute('aria-pressed',S.view==='inbox');
+  $('lnBn').setAttribute('aria-pressed',S.lang==='bn');$('lnEn').setAttribute('aria-pressed',S.lang==='en');
+}
+function showView(){
+  $('viewSite').classList.toggle('hide',S.view!=='site');
+  $('viewInbox').classList.toggle('hide',S.view!=='inbox');
+  renderCartBar();renderBar();
+}
+
+/* ---------- site view ---------- */
+function renderSite(){
+  var k=K(),w=W();
+  var cats=[{id:'all',en:'All',bn:'সব'}].concat(k.cats);
+  var faq=w.faq.map(function(f){var a=f[1]==='delivery'?L(k.delivery):f[1]==='payment'?w.payment:f[1]==='time'?L(k.time):w.returns;return '<details><summary>'+esc(f[0])+'</summary><p>'+esc(a)+'</p></details>'}).join('');
+  $('viewSite').innerHTML=
+   '<header class="hero"><div class="wrap hero-in">'+
+     '<div class="logo" aria-hidden="true">'+esc(initials(S.name||(S.nameBn?S.nameBn:k.name.en)))+'</div>'+
+     '<div><h1>'+esc(shop())+'</h1><p class="tag">'+esc(L(k.tag))+'</p>'+
+     '<ul class="chips"><li>'+esc(w.cod)+'</li><li>'+esc(w.mfs)+'</li><li>'+esc(k.outside?w.nation:w.inDhaka)+'</li></ul>'+
+     '<div class="hero-cta"><button type="button" class="btn primary" id="goItems">'+esc(w.seeItems)+'</button>'+
+     '<a class="btn ghost" target="_blank" rel="noopener" href="https://wa.me/?text='+encodeURIComponent(w.askText(shop()))+'">'+esc(w.ask)+'</a></div></div>'+
+   '</div></header>'+
+   '<section class="sec" id="itemsSec"><div class="wrap"><h2>'+esc(w.itemsT)+'</h2>'+
+     '<div class="cats" role="group" aria-label="'+esc(w.itemsT)+'">'+cats.map(function(c){return '<button type="button" data-cat="'+c.id+'" aria-pressed="'+(S.cat===c.id)+'">'+esc(L(c))+'</button>'}).join('')+'</div>'+
+     '<div class="grid" id="grid"></div></div></section>'+
+   '<section class="sec"><div class="wrap"><h2>'+esc(w.howT)+'</h2><ol class="steps">'+w.how.map(function(s){return '<li>'+esc(s)+'</li>'}).join('')+'</ol></div></section>'+
+   '<section class="sec"><div class="wrap"><h2>'+esc(w.infoT)+'</h2><div class="two">'+
+     '<div class="box"><h3>'+esc(w.deliveryT)+'</h3><p>'+esc(L(k.delivery))+'</p></div>'+
+     '<div class="box"><h3>'+esc(w.paymentT)+'</h3><p>'+esc(w.payment)+'</p></div></div></div></section>'+
+   '<section class="sec"><div class="wrap"><h2>'+esc(w.faqT)+'</h2>'+faq+'</div></section>'+
+   '<footer class="sec foot"><div class="wrap"><div class="credit"><div><b>'+esc(w.creditT)+'</b><p>'+esc(w.credit)+'</p></div>'+contactBtns()+'</div></div></footer>';
+  renderGrid();
+}
+function qtyCtl(it){
+  var q=S.cart[it.id]||0,w=W();
+  if(!q)return '<button type="button" class="add" data-inc="'+it.id+'">'+esc(w.add)+'</button>';
+  return '<div class="qty"><button type="button" data-dec="'+it.id+'" aria-label="'+esc(w.dec)+'">−</button><span>'+num(q)+'</span><button type="button" data-inc="'+it.id+'" aria-label="'+esc(w.inc)+'">+</button></div>';
+}
+function renderGrid(){
+  var g=$('grid');if(!g)return;
+  var list=K().items.filter(function(it){return S.cat==='all'||it.cat===S.cat});
+  g.innerHTML=list.map(function(it,i){
+    return '<article class="card"><div class="pic" style="--t:var('+(i%2?'--tile2':'--tile')+')" aria-hidden="true">'+it.e+'</div>'+
+      '<div class="pbody"><h3 class="pname">'+esc(iname(it))+'</h3><div class="punit">'+esc(iunit(it))+'</div><p class="pdesc">'+esc(idesc(it))+'</p>'+
+      '<div class="price">'+tk(it.p)+'</div>'+qtyCtl(it)+'</div></article>';
+  }).join('');
+}
+function cartList(){var out=[];K().items.forEach(function(it){var q=S.cart[it.id];if(q)out.push({it:it,q:q})});return out}
+function cartSum(){return cartList().reduce(function(a,c){return a+c.it.p*c.q},0)}
+function cartCount(){return cartList().reduce(function(a,c){return a+c.q},0)}
+function renderCartBar(){
+  var n=cartCount(),bar=$('cartbar');
+  bar.classList.toggle('show',n>0&&S.view==='site'&&!$('sheet').classList.contains('open'));
+  $('cartBtn').innerHTML='<span>'+esc(W().count(n))+' · '+tk(cartSum())+'</span><span class="go">'+esc(W().orderNow)+'</span>';
+}
+function changeQty(id,d){
+  var q=(S.cart[id]||0)+d;if(q<=0)delete S.cart[id];else S.cart[id]=Math.min(q,20);
+  renderGrid();renderCartBar();if($('sheet').classList.contains('open'))updateSheet();
+}
+
+/* ---------- checkout sheet ---------- */
+function defaultForm(){var d=new Date();d.setDate(d.getDate()+(K().minDays||0));return {name:'',phone:'',area:'dhanmondi',addr:'',date:ymd(d),pay:'cod',note:''}}
+function openSheet(){
+  if(!S.form)S.form=defaultForm();
+  if(!K().outside&&S.form.area==='outside')S.form.area='dhanmondi';
+  var w=W(),f=S.form,min=new Date();min.setDate(min.getDate()+(K().minDays||0));
+  $('sheetIn').innerHTML=
+   '<div class="sheet-head"><h2 id="sheetTitle">'+esc(w.sheetT)+'</h2><button type="button" class="btn ghost sm" id="closeSheet">'+esc(w.close)+'</button></div>'+
+   '<ul class="lines" id="sLines"></ul>'+
+   '<form class="form" id="oForm" novalidate>'+
+    '<div class="row2"><div class="field"><label for="fName">'+esc(w.fName)+'</label><input id="fName" autocomplete="name" value="'+esc(f.name)+'"><div class="err" id="eName"></div></div>'+
+    '<div class="field"><label for="fPhone">'+esc(w.fPhone)+'</label><input id="fPhone" inputmode="tel" autocomplete="tel" placeholder="01XXXXXXXXX" value="'+esc(f.phone)+'"><div class="err" id="ePhone"></div></div></div>'+
+    '<div class="row2"><div class="field"><label for="fArea">'+esc(w.fArea)+'</label><select id="fArea">'+areasAllowed().map(function(a){return '<option value="'+a.id+'"'+(a.id===f.area?' selected':'')+'>'+esc(L(a))+'</option>'}).join('')+'</select>'+(K().outside?'':'<div class="small">'+esc(w.inOnly)+'</div>')+'</div>'+
+    '<div class="field"><label for="fDate">'+esc(w.fDate)+'</label><input id="fDate" type="date" min="'+ymd(min)+'" value="'+esc(f.date)+'"></div></div>'+
+    '<div class="field"><label for="fAddr">'+esc(w.fAddr)+'</label><input id="fAddr" autocomplete="street-address" placeholder="'+esc(w.fAddrPh)+'" value="'+esc(f.addr)+'"><div class="err" id="eAddr"></div></div>'+
+    '<div class="field"><span class="small" style="display:block;font-weight:600;color:var(--ink);margin-bottom:3px">'+esc(w.fPay)+'</span><div class="radio">'+
+      '<label><input type="radio" name="pay" id="payCod" value="cod"'+(f.pay==='cod'?' checked':'')+'> '+esc(w.payCod)+'</label>'+
+      '<label><input type="radio" name="pay" id="payMfs" value="mfs"'+(f.pay==='mfs'?' checked':'')+'> '+esc(w.payMfs)+'</label></div></div>'+
+    '<div class="field"><label for="fNote">'+esc(w.fNote)+'</label><textarea id="fNote" placeholder="'+esc(w.fNotePh)+'">'+esc(f.note)+'</textarea></div>'+
+   '</form>'+
+   '<div class="totals" id="sTotals"></div>'+
+   '<div class="small">'+esc(w.preview)+'</div><pre class="preview" id="sPreview"></pre>'+
+   '<div class="actions"><a class="btn wa block" id="waBtn" target="_blank" rel="noopener" href="#">'+esc(w.send)+'</a>'+
+   '<button type="button" class="btn ghost block" id="copyBtn">'+esc(w.copy)+'</button>'+
+   '<p class="small" style="margin:2px 0 0">'+esc(w.waNote)+'</p></div>';
+  $('sheet').classList.add('open');renderCartBar();
+  updateSheet();
+  setTimeout(function(){var c=$('closeSheet');if(c)c.focus()},30);
+}
+function closeSheet(){$('sheet').classList.remove('open');renderCartBar()}
+function readForm(){
+  var f=S.form;if(!$('oForm'))return;
+  f.name=$('fName').value;f.phone=$('fPhone').value;f.area=$('fArea').value;f.addr=$('fAddr').value;f.date=$('fDate').value;f.note=$('fNote').value;
+  f.pay=$('payMfs').checked?'mfs':'cod';
+}
+function errors(){var f=S.form,w=W(),e={};if(!f.name.trim())e.name=w.eName;if(!normPhone(f.phone))e.phone=w.ePhone;if(f.addr.trim().length<5)e.addr=w.eAddr;return e}
+function orderText(){
+  var w=W(),f=S.form,lines=[w.msgHead(shop())],sub=0;
+  cartList().forEach(function(c){var lt=c.it.p*c.q;sub+=lt;lines.push('• '+iname(c.it)+' ('+iunit(c.it)+') × '+num(c.q)+' = '+tk(lt))});
+  var fee=feeOf(f.area);
+  lines.push('',w.sub+': '+tk(sub),w.fee+': '+tk(fee),w.total+': '+tk(sub+fee),'');
+  lines.push(w.mName+': '+(f.name.trim()||'…'),w.mPhone+': '+(f.phone.trim()||'…'),w.mArea+': '+areaName(f.area),w.mAddr+': '+(f.addr.trim()||'…'),w.mDate+': '+dateLabel(f.date),w.mPay+': '+(f.pay==='cod'?w.payCod:w.payMfs));
+  if(f.note.trim())lines.push(w.mNote+': '+f.note.trim());
+  return lines.join('\n');
+}
+function updateSheet(){
+  var w=W(),items=cartList();
+  $('sLines').innerHTML=items.length?items.map(function(c){
+    return '<li><div class="nm">'+esc(iname(c.it))+'<small>'+esc(iunit(c.it))+' · '+tk(c.it.p)+'</small></div>'+
+      '<div class="qty"><button type="button" data-dec="'+c.it.id+'" aria-label="'+esc(w.dec)+'">−</button><span>'+num(c.q)+'</span><button type="button" data-inc="'+c.it.id+'" aria-label="'+esc(w.inc)+'">+</button></div>'+
+      '<div class="lt">'+tk(c.it.p*c.q)+'</div></li>'}).join(''):'<li><div class="nm">'+esc(w.empty)+'</div></li>';
+  readForm();
+  var sub=cartSum(),fee=feeOf(S.form.area);
+  $('sTotals').innerHTML='<div><span>'+esc(w.sub)+'</span><span>'+tk(sub)+'</span></div><div><span>'+esc(w.fee)+' ('+esc(areaName(S.form.area))+')</span><span>'+tk(fee)+'</span></div><div class="grand"><span>'+esc(w.total)+'</span><span>'+tk(sub+fee)+'</span></div>';
+  var txt=orderText();$('sPreview').textContent=txt;
+  var e=errors(),ok=!Object.keys(e).length&&items.length>0,b=$('waBtn');
+  b.href=ok?'https://wa.me/?text='+encodeURIComponent(txt):'#';
+  b.setAttribute('aria-disabled',ok?'false':'true');
+  if(S.tried){$('eName').textContent=e.name||'';$('ePhone').textContent=e.phone||'';$('eAddr').textContent=e.addr||''}
+}
+
+/* ---------- inbox view ---------- */
+function rule(key){
+  var ek=S.kind+'|'+S.lang+'|'+key;
+  if(S.edits[ek]!=null)return S.edits[ek];
+  var w=W(),k=K();
+  if(key==='greet')return w.greet(shop());
+  if(key==='away')return w.awayMsg(shop());
+  if(key==='delivery')return L(k.delivery);
+  if(key==='time')return L(k.time);
+  return w.payment;
+}
+function seedOrders(){
+  var it=K().items;
+  return [{id:1041,t:'10:12',item:it[1].id,qty:1,area:'dhanmondi',phone:'017•••482',status:'done'},
+          {id:1042,t:'11:47',item:it[3].id,qty:2,area:'mirpur',phone:'018•••905',status:'packing'}];
+}
+function renderInbox(){
+  var w=W();
+  var rules=['greet','away','delivery','payment','time'].map(function(key){
+    var trig=key==='greet'?w.trigGreet:key==='away'?w.trigAway:w.trigWords+INTENTS[key].slice(0,6).map(function(x){return '"'+x+'"'}).join(', ');
+    return '<div class="rule"><label for="r_'+key+'">'+esc(w.rl[key])+'</label><div class="trig">'+esc(trig)+'</div><textarea id="r_'+key+'" data-rule="'+key+'">'+esc(rule(key))+'</textarea></div>';
+  }).join('');
+  $('viewInbox').innerHTML=
+   '<div class="wrap inbox">'+
+    '<section>'+
+     '<div class="phone-tools"><label class="switch"><input type="checkbox" id="awayT"'+(S.away?' checked':'')+'> '+esc(w.awayT)+'</label><button type="button" class="btn ghost sm" id="resetChat">'+esc(w.reset)+'</button></div>'+
+     '<div class="phone">'+
+      '<div class="ph-status"><span id="phTime"></span><span>4G ▮▮▮</span></div>'+
+      '<div class="ph-head"><div class="logo sm" aria-hidden="true">'+esc(initials(S.name||(S.nameBn?S.nameBn:K().name.en)))+'</div><div><b>'+esc(shop())+'</b><small id="phState"></small></div></div>'+
+      '<div class="ph-body" id="chat" aria-live="polite"></div>'+
+      '<div class="ph-quick" id="quick"></div>'+
+      '<form class="ph-input" id="chatForm"><input id="chatIn" autocomplete="off" aria-label="'+esc(w.ph)+'" placeholder="'+esc(w.ph)+'"><button type="submit">'+esc(w.sendBtn)+'</button></form>'+
+     '</div>'+
+     '<p class="hint">'+esc(w.hint)+'</p>'+
+    '</section>'+
+    '<section class="owner">'+
+     '<div class="panel"><h2>'+esc(w.ownerT)+'</h2><p class="sub">'+esc(w.ownerSub)+'</p><div class="stats" id="stats"></div></div>'+
+     '<div class="panel"><h2>'+esc(w.sheetTT)+'</h2><p class="sub">'+esc(w.sheetSub)+'</p><div class="tablewrap"><table><thead><tr>'+w.cols.map(function(c,i){return '<th'+(i===3||i===6?' style="text-align:right"':'')+'>'+esc(c)+'</th>'}).join('')+'</tr></thead><tbody id="sheetBody"></tbody></table></div></div>'+
+     '<div class="panel"><h2>'+esc(w.rulesT)+'</h2><p class="sub">'+esc(w.rulesSub)+'</p><div class="rules">'+rules+'</div><p class="honest" style="margin-top:12px">'+esc(w.priceRule)+'</p></div>'+
+     '<p class="honest">'+esc(w.honest)+'</p>'+
+     '<div class="cta"><b>'+esc(w.ctaT)+'</b><p>'+esc(w.cta)+'</p>'+contactBtns()+'</div>'+
+    '</section>'+
+   '</div>';
+  drawPhoneState();drawStats();drawSheet();
+}
+function drawPhoneState(){
+  var t=$('phTime');if(!t)return;
+  if(S.away){var d=new Date();d.setHours(23,40,0,0);t.textContent=clock(d)}else t.textContent=clock(new Date());
+  var s=$('phState');s.textContent=S.away?W().offline:W().online;s.className=S.away?'off':'';
+}
+function drawStats(){
+  var el=$('stats');if(!el)return;var w=W();
+  var n=S.orders.filter(function(o){return o.status==='new'}).length;
+  el.innerHTML='<div class="stat"><b>'+num(S.replies)+'</b><span>'+esc(w.stReplies)+'</span></div><div class="stat"><b>'+num(n)+'</b><span>'+esc(w.stOrders)+'</span></div><div class="stat"><b>'+esc(w.mins(S.replies*2))+'</b><span>'+esc(w.stSaved)+'</span></div>';
+}
+function drawSheet(){
+  var b=$('sheetBody');if(!b)return;var w=W();
+  b.innerHTML=S.orders.slice().reverse().map(function(o){
+    var it=itemById(o.item)||K().items[0],total=it.p*o.qty+feeOf(o.area);
+    var t=S.lang==='bn'?o.t.replace(/\d/g,function(x){return BN[x]}):o.t;
+    return '<tr'+(o.fresh?' class="fresh"':'')+'><td>#'+o.id+'</td><td>'+esc(t)+'</td><td>'+esc(iname(it))+'</td><td class="num">'+num(o.qty)+'</td><td>'+esc(areaName(o.area))+'</td><td>'+esc(o.phone)+'</td><td class="num">'+tk(total)+'</td><td><span class="pill '+(o.status==='new'?'new':o.status)+'">'+esc(w.st[o.status])+'</span></td></tr>';
+  }).join('');
+}
+function drawChat(){
+  var b=$('chat');if(!b)return;
+  var h=S.chat.map(function(m){return '<div class="msg '+m.from+'">'+esc(m.text)+'</div>'}).join('');
+  if(S.typing)h+='<div class="typing" aria-hidden="true"><i></i><i></i><i></i></div>';
+  b.innerHTML=h;
+  $('quick').innerHTML=(S.typing?[]:S.quick).map(function(x){return '<button type="button" data-q="'+esc(x.id)+'">'+esc(x.label)+'</button>'}).join('');
+  b.scrollTop=b.scrollHeight;
+}
+function mainQuick(){var w=W();return ['price','delivery','payment','order','time','human'].map(function(k){return {id:'q:'+k,label:w.q[k]}})}
+function botSay(text,quick){
+  var gen=S.gen;
+  busy=busy.then(function(){return new Promise(function(res){
+    if(gen!==S.gen)return res();
+    S.typing=true;drawChat();
+    setTimeout(function(){
+      if(gen!==S.gen)return res();
+      S.typing=false;S.chat.push({from:'bot',text:text});S.quick=quick||mainQuick();S.replies++;drawChat();drawStats();res();
+    },DELAY);
+  })});
+}
+function startChat(){
+  S.gen++;busy=Promise.resolve();S.typing=false;S.flow=null;
+  S.chat=[{from:'bot',text:rule(S.away?'away':'greet')}];S.quick=mainQuick();
+  drawChat();drawPhoneState();
+}
+function has(s,w){
+  if(/^[a-z]+$/.test(w)&&w.length<=4)return new RegExp('(^|[^a-z])'+w+'([^a-z]|$)').test(s);
+  return s.indexOf(w)>-1;
+}
+function detect(text){
+  var s=' '+text.toLowerCase()+' ',best=null,top=0;
+  INTENT_ORDER.forEach(function(k){
+    var sc=0;INTENTS[k].forEach(function(w){if(has(s,w))sc+=WEAK.indexOf(w)>-1?1:2});
+    if(sc>top){top=sc;best=k}
+  });
+  return best;
+}
+function findItems(text){
+  var s=text.toLowerCase().replace(/[?!.,।:;"'()]/g,' '),toks=s.split(/\s+/).filter(Boolean),res=[];
+  K().items.forEach(function(it){
+    var words=(it.en+' '+it.bn).toLowerCase().replace(/[’'()]/g,' ').split(/[\s,-]+/).filter(function(w){return w.length>=3&&STOP.indexOf(w)<0});
+    var sc=0;
+    words.forEach(function(w){
+      if(toks.indexOf(w)>-1||toks.some(function(x){return x.length>=4&&(w.indexOf(x)===0||x.indexOf(w)===0)}))sc+=2;
+      else if(s.indexOf(w)>-1)sc+=1;
+    });
+    if(sc)res.push({it:it,sc:sc});
+  });
+  if(!res.length)return [];
+  var max=Math.max.apply(null,res.map(function(r){return r.sc}));
+  return res.filter(function(r){return r.sc===max}).map(function(r){return r.it});
+}
+function priceText(){
+  var w=W();
+  return w.priceHead+'\n'+K().items.slice(0,7).map(function(it){return '• '+iname(it)+' ('+iunit(it)+'): '+tk(it.p)}).join('\n')+'\n'+w.priceTail;
+}
+function answer(intent){
+  var w=W();
+  if(intent==='price')return botSay(priceText());
+  if(intent==='delivery'||intent==='payment'||intent==='time')return botSay(rule(intent));
+  if(intent==='order')return startFlow(null);
+  if(intent==='human')return botSay(w.human(S.away));
+  if(intent==='greet')return botSay(rule(S.away?'away':'greet'));
+  botSay(w.fallback);
+}
+function customer(text,qid){
+  S.chat.push({from:'me',text:text});S.quick=[];drawChat();
+  if(S.flow)return flowStep(text,qid);
+  if(qid&&qid.indexOf('q:')===0)return answer(qid.slice(2));
+  if(qid&&qid.indexOf('orderitem:')===0)return startFlow(itemById(qid.slice(10)));
+  var intent=detect(text);
+  if(!intent||intent==='price'||intent==='greet'){
+    var f=findItems(text);
+    if(f.length===1){var it=f[0],w=W();return botSay(w.itemReply(iname(it),iunit(it),tk(it.p),idesc(it)),[{id:'orderitem:'+it.id,label:w.q.order}].concat(mainQuick().filter(function(q){return q.id!=='q:order'})))}
+    if(f.length>1)return botSay(W().multi+'\n'+f.map(function(it){return '• '+iname(it)+' ('+iunit(it)+'): '+tk(it.p)}).join('\n'));
+  }
+  answer(intent);
+}
+function itemQuick(){return K().items.slice(0,8).map(function(it){return {id:'item:'+it.id,label:iname(it)}})}
+function qtyQuick(){return [1,2,3,4,5].map(function(n){return {id:'qty:'+n,label:num(n)}})}
+function areaQuick(){return CHAT_AREAS.filter(function(id){return !area(id).out||K().outside}).map(function(id){return {id:'area:'+id,label:areaName(id)}})}
+function startFlow(it){
+  S.flow={step:'product'};
+  if(it){S.flow.item=it.id;S.flow.step='qty';return botSay(W().askQty(iname(it)),qtyQuick())}
+  botSay(W().askProduct,itemQuick());
+}
+function cancelFlow(){S.flow=null;botSay(W().cancelled)}
+function flowStep(text,qid){
+  var w=W(),f=S.flow,low=text.toLowerCase();
+  if(qid==='no'||/বাতিল|cancel|^no$|না থাক/.test(low))return cancelFlow();
+  if(qid&&qid.indexOf('q:')===0){S.flow=null;return answer(qid.slice(2))}
+  if(f.step==='product'){
+    var it=qid&&qid.indexOf('item:')===0?itemById(qid.slice(5)):(function(){var r=findItems(text);return r.length===1?r[0]:null})();
+    if(!it)return botSay(w.pick,itemQuick());
+    f.item=it.id;f.step='qty';return botSay(w.askQty(iname(it)),qtyQuick());
+  }
+  if(f.step==='qty'){
+    var m=toLatin(qid&&qid.indexOf('qty:')===0?qid.slice(4):text).match(/\d+/),n=m?parseInt(m[0],10):0;
+    if(!(n>=1&&n<=20))return botSay(w.badQty,qtyQuick());
+    f.qty=n;f.step='area';return botSay(w.askArea,areaQuick());
+  }
+  if(f.step==='area'){
+    var a=null;
+    if(qid&&qid.indexOf('area:')===0)a=area(qid.slice(5));
+    else AREAS.forEach(function(x){if(!a&&(low.indexOf(x.en.toLowerCase())>-1||text.indexOf(x.bn)>-1))a=x});
+    if(!a)return botSay(w.pick,areaQuick());
+    if(a.out&&!K().outside)return botSay(w.outNo,areaQuick());
+    f.area=a.id;f.step='addr';return botSay(w.askAddr,[{id:'no',label:w.no}]);
+  }
+  if(f.step==='addr'){
+    if(text.trim().length<6)return botSay(w.badAddr,[{id:'no',label:w.no}]);
+    f.addr=text.trim();f.step='phone';return botSay(w.askPhone,[{id:'no',label:w.no}]);
+  }
+  if(f.step==='phone'){
+    var p=normPhone(text);if(!p)return botSay(w.badPhone,[{id:'no',label:w.no}]);
+    f.phone=p;f.step='confirm';
+    var it2=itemById(f.item),fee=feeOf(f.area);
+    return botSay(w.summary({item:iname(it2),qty:num(f.qty),area:areaName(f.area),addr:f.addr,phone:p,fee:tk(fee),total:tk(it2.p*f.qty+fee)}),[{id:'yes',label:w.yes},{id:'no',label:w.no}]);
+  }
+  if(f.step==='confirm'){
+    if(qid==='yes'||/হ্যাঁ|হা|^ha$|^yes|^ok|কনফার্ম|confirm|ঠিক আছে/.test(low)){
+      var it3=itemById(f.item),total=it3.p*f.qty+feeOf(f.area),d=new Date(),id=S.nextId++;
+      S.orders.forEach(function(o){o.fresh=false});
+      S.orders.push({id:id,t:pad(d.getHours())+':'+pad(d.getMinutes()),item:f.item,qty:f.qty,area:f.area,phone:mask(f.phone),status:'new',fresh:true});
+      S.flow=null;drawSheet();drawStats();
+      return botSay(w.done(id,tk(total)));
+    }
+    return botSay(w.pick,[{id:'yes',label:w.yes},{id:'no',label:w.no}]);
+  }
+}
+
+/* ---------- wiring ---------- */
+function resetForKind(){S.cart={};S.cat='all';S.form=null;S.tried=false;S.orders=seedOrders();S.nextId=1043;S.replies=0}
+function renderAll(){applyTheme();renderBar();renderSite();renderInbox();startChat();showView();if($('sheet').classList.contains('open'))openSheet()}
+function applyHash(){
+  var p=parseLink(),changed=p.kind!==S.kind||p.name!==S.name||p.nameBn!==S.nameBn;
+  S.kind=p.kind;S.name=p.name;S.nameBn=p.nameBn;S.pitch=p.pitch;S.view=p.view;
+  if(changed){resetForKind();closeSheet()}
+  if(changed||!S.ready){S.ready=true;renderAll()}else showView();
+}
+document.addEventListener('click',function(e){
+  var t=e.target.closest('button,a');if(!t)return;
+  if(t.dataset.inc){changeQty(t.dataset.inc,1);return}
+  if(t.dataset.dec){changeQty(t.dataset.dec,-1);return}
+  if(t.dataset.cat){S.cat=t.dataset.cat;document.querySelectorAll('[data-cat]').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.cat===S.cat)});renderGrid();return}
+  if(t.dataset.q){customer(t.textContent,t.dataset.q);return}
+  switch(t.id){
+    case 'goItems':var s=$('itemsSec');if(s)s.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});break;
+    case 'cartBtn':openSheet();break;
+    case 'closeSheet':closeSheet();break;
+    case 'tabSite':case 'tabInbox':S.view=t.id==='tabSite'?'site':'inbox';writeHash();showView();window.scrollTo(0,0);break;
+    case 'lnBn':case 'lnEn':var l=t.id==='lnBn'?'bn':'en';if(l!==S.lang){S.lang=l;save('qb-demo-lang',l);renderAll()}break;
+    case 'resetChat':startChat();break;
+    case 'waBtn':readForm();S.tried=true;updateSheet();if(t.getAttribute('aria-disabled')==='true')e.preventDefault();break;
+    case 'copyBtn':
+      var txt=orderText(),w=W();
+      var done=function(){t.textContent=w.copied;setTimeout(function(){t.textContent=w.copy},1600)};
+      try{navigator.clipboard.writeText(txt).then(done,function(){selectPreview();done()})}catch(err){selectPreview();done()}
+      break;
+  }
+});
+function selectPreview(){try{var r=document.createRange();r.selectNodeContents($('sPreview'));var s=getSelection();s.removeAllRanges();s.addRange(r)}catch(e){}}
+document.addEventListener('input',function(e){
+  if(e.target.closest&&e.target.closest('#oForm'))updateSheet();
+  if(e.target.dataset&&e.target.dataset.rule){S.edits[S.kind+'|'+S.lang+'|'+e.target.dataset.rule]=e.target.value}
+});
+document.addEventListener('change',function(e){
+  if(e.target.closest&&e.target.closest('#oForm'))updateSheet();
+  if(e.target.id==='awayT'){S.away=e.target.checked;startChat()}
+});
+document.addEventListener('submit',function(e){
+  if(e.target.id==='chatForm'){e.preventDefault();var i=$('chatIn'),v=i.value.trim();if(v){i.value='';customer(v,null)}}
+  if(e.target.id==='oForm')e.preventDefault();
+});
+$('sheet').addEventListener('click',function(e){if(e.target.id==='sheet')closeSheet()});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&$('sheet').classList.contains('open'))closeSheet()});
+window.addEventListener('hashchange',applyHash);
+setInterval(function(){if(!S.away)drawPhoneState()},30000);
+
+var saved=read('qb-demo-lang');if(saved==='en'||saved==='bn')S.lang=saved;
+S.orders=seedOrders();
+applyHash();
+})();
+</script>
+</body>
+</html>
