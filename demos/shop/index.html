@@ -68,7 +68,13 @@ h1,h2,h3{text-wrap:balance}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px}
 @media(min-width:700px){.grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
-.pic{aspect-ratio:4/3;display:grid;place-items:center;font-size:54px;line-height:1;background:radial-gradient(circle at 35% 30%,#ffffff 0 16%,var(--t,var(--tile)) 72%)}
+.pic{position:relative;overflow:hidden;aspect-ratio:4/3;display:grid;place-items:center;font-size:54px;line-height:1;background:radial-gradient(circle at 35% 30%,#ffffff 0 16%,var(--t,var(--tile)) 72%)}
+.pic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.credits{margin-top:14px;color:var(--muted);font-size:13px}
+.credits summary{font-weight:600;color:var(--ink);font-size:14px}
+.credits p{margin:6px 0}
+.credits ul{margin:6px 0 0;padding-left:18px;display:grid;gap:3px}
+.credits a{color:inherit}
 .pbody{padding:11px 13px 13px;display:flex;flex-direction:column;gap:2px;flex:1}
 .pname{font-family:var(--f-display);font-weight:700;font-size:17.5px;line-height:1.25;margin:0}
 .punit{color:var(--muted);font-size:13px}
@@ -248,16 +254,16 @@ fashion:{
   tag:{en:'Sarees, three-pieces and kurtis, cash on delivery across Bangladesh',bn:'শাড়ি, থ্রি-পিস আর কুর্তি, সারা দেশে ক্যাশ অন ডেলিভারি'},
   theme:{accent:'#0e6a68',soft:'#dcefed',tile:'#e2f1ef',tile2:'#f5ecdc',paper:'#f8fbfb'},
   outside:true,minDays:1,
-  cats:[{id:'saree',en:'Sarees',bn:'শাড়ি'},{id:'tp',en:'Three-piece & kurti',bn:'থ্রি-পিস ও কুর্তি'},{id:'modest',en:'Borka & hijab',bn:'বোরকা ও হিজাব'},{id:'kids',en:'Kids',bn:'বাচ্চাদের'}],
+  cats:[{id:'saree',en:'Sarees',bn:'শাড়ি'},{id:'tp',en:'Three-piece & kurti',bn:'থ্রি-পিস ও কুর্তি'},{id:'modest',en:'Borka & hijab',bn:'বোরকা ও হিজাব'},{id:'kids',en:'Kids & men',bn:'বাচ্চা ও ছেলেদের'}],
   items:[
     {id:'jamdani',cat:'saree',e:'🥻',p:6500,en:'Dhakai Jamdani Saree',bn:'ঢাকাই জামদানি শাড়ি',uen:'with blouse piece',ubn:'ব্লাউজ পিস সহ',den:'Handwoven half-silk',dbn:'হাতে বোনা হাফ সিল্ক'},
     {id:'tangail',cat:'saree',e:'🥻',p:1850,en:'Tangail Cotton Saree',bn:'টাঙ্গাইল সুতি শাড়ি',uen:'6 yards',ubn:'৬ গজ',den:'Soft, for everyday wear',dbn:'নরম, প্রতিদিন পরার জন্য'},
     {id:'lawn',cat:'tp',e:'👗',p:2450,en:'Lawn Three-Piece',bn:'লন থ্রি-পিস',uen:'unstitched',ubn:'আনস্টিচড',den:'Printed lawn with chiffon dupatta',dbn:'প্রিন্টেড লন, শিফন ওড়না'},
-    {id:'kurti',cat:'tp',e:'👚',p:1350,en:'Embroidered Kurti',bn:'এমব্রয়ডারি কুর্তি',uen:'sizes S to XL',ubn:'সাইজ S থেকে XL',den:'Cotton with hand embroidery',dbn:'সুতি কাপড়, হাতের কাজ'},
+    {id:'kurti',cat:'tp',e:'👚',p:1350,en:'Printed Kaftan Kurti',bn:'প্রিন্টেড কাফতান কুর্তি',uen:'sizes S to XL',ubn:'সাইজ S থেকে XL',den:'Light, colourful prints',dbn:'হালকা কাপড়, রঙিন প্রিন্ট'},
     {id:'borka',cat:'modest',e:'🧕',p:2200,en:'Cherry Borka',bn:'চেরি বোরকা',uen:'sizes 50 to 58',ubn:'সাইজ ৫০ থেকে ৫৮',den:'Light, flowing fabric',dbn:'হালকা ও আরামদায়ক কাপড়'},
-    {id:'hijab',cat:'modest',e:'🧣',p:450,en:'Georgette Hijab',bn:'জর্জেট হিজাব',uen:'1 piece',ubn:'১ পিস',den:'Available in 12 colours',dbn:'১২টি রঙে পাওয়া যায়'},
-    {id:'frock',cat:'kids',e:'👗',p:950,en:'Girls’ Party Frock',bn:'মেয়েদের পার্টি ফ্রক',uen:'ages 2 to 8',ubn:'বয়স ২ থেকে ৮',den:'Net and satin',dbn:'নেট আর সাটিন'},
-    {id:'panjabi',cat:'kids',e:'👕',p:850,en:'Boys’ Panjabi',bn:'ছেলেদের পাঞ্জাবি',uen:'ages 3 to 10',ubn:'বয়স ৩ থেকে ১০',den:'Cotton, festive cut',dbn:'সুতি, উৎসবের ডিজাইন'}
+    {id:'hijab',cat:'modest',e:'🧣',p:450,en:'Hijab and Scarves',bn:'হিজাব ও স্কার্ফ',uen:'1 piece',ubn:'১ পিস',den:'Many prints and colours',dbn:'নানা রং আর প্রিন্টে'},
+    {id:'frock',cat:'kids',e:'👗',p:950,en:'Girls’ Party Frock',bn:'মেয়েদের পার্টি ফ্রক',uen:'ages 2 to 8',ubn:'বয়স ২ থেকে ৮',den:'Cotton with a frilled hem',dbn:'সুতি কাপড়, নিচে কুঁচি'},
+    {id:'panjabi',cat:'kids',e:'👕',p:850,en:'Embroidered Panjabi Fabric',bn:'এমব্রয়ডারি পাঞ্জাবি কাপড়',uen:'unstitched, 2.5 yards',ubn:'আনস্টিচড, আড়াই গজ',den:'White cotton with neck embroidery',dbn:'সাদা সুতি, গলায় সুতার কাজ'}
   ],
   delivery:{en:'Inside Dhaka ৳80, outside Dhaka ৳150. 1 to 2 days in Dhaka, 2 to 4 days elsewhere, cash on delivery by courier.',bn:'ঢাকার ভিতরে ৳৮০, ঢাকার বাইরে ৳১৫০। ঢাকায় ১-২ দিন, বাইরে ২-৪ দিন লাগে। কুরিয়ারে ক্যাশ অন ডেলিভারি।'},
   time:{en:'In-stock items ship the next day. Jamdani orders can take 3 days.',bn:'স্টকের পণ্য পরদিন পাঠাই। জামদানি অর্ডারে ৩ দিন লাগতে পারে।'}
@@ -286,16 +292,14 @@ beauty:{
   tag:{en:'Skincare and makeup, delivered in Dhaka and nationwide',bn:'স্কিন কেয়ার আর মেকআপ, ঢাকা ও সারা দেশে ডেলিভারি'},
   theme:{accent:'#7b3b9e',soft:'#efe3f7',tile:'#f5e9fb',tile2:'#fde6ee',paper:'#fdfaff'},
   outside:true,minDays:1,
-  cats:[{id:'skin',en:'Skincare',bn:'স্কিন কেয়ার'},{id:'makeup',en:'Makeup & mehedi',bn:'মেকআপ ও মেহেদি'},{id:'hair',en:'Hair care',bn:'চুলের যত্ন'}],
+  cats:[{id:'skin',en:'Skincare',bn:'স্কিন কেয়ার'},{id:'makeup',en:'Makeup & mehedi',bn:'মেকআপ ও মেহেদি'},{id:'scent',en:'Attar & fragrance',bn:'আতর ও সুগন্ধি'}],
   items:[
-    {id:'sunscreen',cat:'skin',e:'🧴',p:850,en:'Sunscreen SPF 50',bn:'সানস্ক্রিন SPF 50',uen:'50 ml',ubn:'৫০ মিলি',den:'Light gel, no white cast',dbn:'হালকা জেল, সাদা ভাব পড়ে না'},
-    {id:'facewash',cat:'skin',e:'🫧',p:550,en:'Gentle Face Wash',bn:'জেন্টল ফেস ওয়াশ',uen:'100 ml',ubn:'১০০ মিলি',den:'For oily and combination skin',dbn:'তৈলাক্ত ও মিশ্র ত্বকের জন্য'},
     {id:'serum',cat:'skin',e:'💧',p:950,en:'Vitamin C Serum',bn:'ভিটামিন সি সিরাম',uen:'30 ml',ubn:'৩০ মিলি',den:'For daily use',dbn:'প্রতিদিন ব্যবহারের জন্য'},
     {id:'aloe',cat:'skin',e:'🌿',p:450,en:'Aloe Vera Gel',bn:'অ্যালোভেরা জেল',uen:'300 ml',ubn:'৩০০ মিলি',den:'Cooling after time in the sun',dbn:'রোদের পরে ঠান্ডা আরাম'},
+    {id:'soap',cat:'skin',e:'🧼',p:220,en:'Handmade Herbal Soap',bn:'হ্যান্ডমেড হারবাল সাবান',uen:'100 g',ubn:'১০০ গ্রাম',den:'Neem and turmeric',dbn:'নিম আর হলুদ'},
     {id:'tint',cat:'makeup',e:'💄',p:350,en:'Lip and Cheek Tint',bn:'লিপ অ্যান্ড চিক টিন্ট',uen:'4 shades',ubn:'৪টি শেড',den:'Long-lasting colour',dbn:'অনেকক্ষণ রং থাকে'},
-    {id:'kajal',cat:'makeup',e:'👁️',p:280,en:'Smudge-proof Kajal',bn:'স্মাজ-প্রুফ কাজল',uen:'1 pencil',ubn:'১টি পেন্সিল',den:'Stays all day',dbn:'সারাদিন থাকে'},
     {id:'mehedi',cat:'makeup',e:'🌸',p:250,en:'Mehedi Cones',bn:'মেহেদি কোন',uen:'pack of 6',ubn:'৬টার প্যাক',den:'Natural, dark stain',dbn:'প্রাকৃতিক, গাঢ় রং'},
-    {id:'hairoil',cat:'hair',e:'🫙',p:400,en:'Herbal Hair Oil',bn:'হারবাল হেয়ার অয়েল',uen:'200 ml',ubn:'২০০ মিলি',den:'Amla, bhringraj and coconut',dbn:'আমলকী, ভৃঙ্গরাজ আর নারকেল'}
+    {id:'perfume',cat:'scent',e:'🌺',p:600,en:'Attar Perfume Oil',bn:'আতর পারফিউম অয়েল',uen:'6 ml',ubn:'৬ মিলি',den:'Alcohol-free, long-lasting',dbn:'অ্যালকোহল-মুক্ত, অনেকক্ষণ থাকে'}
   ],
   delivery:{en:'Inside Dhaka ৳80, outside Dhaka ৳150. 1 to 2 days in Dhaka, 2 to 4 days elsewhere.',bn:'ঢাকার ভিতরে ৳৮০, ঢাকার বাইরে ৳১৫০। ঢাকায় ১-২ দিন, বাইরে ২-৪ দিন লাগে।'},
   time:{en:'We ship the day after you order.',bn:'অর্ডারের পরদিন পাঠাই।'}
@@ -305,16 +309,14 @@ gifts:{
   tag:{en:'Handmade jewellery, gifts and home decor',bn:'হাতে বানানো গয়না, উপহার আর ঘর সাজানোর জিনিস'},
   theme:{accent:'#1f5aa6',soft:'#e2ebf8',tile:'#e6eefa',tile2:'#fbefdb',paper:'#fafbfe'},
   outside:true,minDays:1,
-  cats:[{id:'jewel',en:'Jewellery',bn:'গয়না'},{id:'gift',en:'Gifts',bn:'উপহার'},{id:'decor',en:'Home decor',bn:'ঘর সাজানো'}],
+  cats:[{id:'gift',en:'Gifts & jewellery',bn:'উপহার ও গয়না'},{id:'decor',en:'Home decor',bn:'ঘর সাজানো'}],
   items:[
-    {id:'earring',cat:'jewel',e:'💍',p:350,en:'Terracotta Earrings',bn:'টেরাকোটা কানের দুল',uen:'1 pair',ubn:'১ জোড়া',den:'Hand-painted clay',dbn:'হাতে রং করা মাটির দুল'},
-    {id:'necklace',cat:'jewel',e:'📿',p:850,en:'Oxidised Necklace Set',bn:'অক্সিডাইজড নেকলেস সেট',uen:'with earrings',ubn:'দুল সহ',den:'Lightweight, made for festivals',dbn:'হালকা, উৎসবের জন্য'},
-    {id:'hamper',cat:'gift',e:'🎁',p:2500,en:'Birthday Gift Hamper',bn:'বার্থডে গিফট হ্যাম্পার',uen:'custom box',ubn:'কাস্টম বক্স',den:'Chocolates, candle, card and a keepsake',dbn:'চকলেট, মোমবাতি, কার্ড আর একটা স্মারক'},
-    {id:'candle',cat:'gift',e:'🕯️',p:450,en:'Scented Jar Candle',bn:'সুগন্ধি জার মোমবাতি',uen:'200 g',ubn:'২০০ গ্রাম',den:'Jasmine or vanilla',dbn:'বেলি অথবা ভ্যানিলা'},
-    {id:'keyring',cat:'gift',e:'🔑',p:250,en:'Name Resin Keyring',bn:'নামসহ রেজিন কি-রিং',uen:'1 piece',ubn:'১ পিস',den:'Any name, with dried flowers',dbn:'যেকোনো নাম, শুকনো ফুল দিয়ে'},
-    {id:'cushion',cat:'decor',e:'🛋️',p:900,en:'Nakshi Kantha Cushion Cover',bn:'নকশি কাঁথা কুশন কভার',uen:'16 x 16 inch',ubn:'১৬ x ১৬ ইঞ্চি',den:'Hand-stitched',dbn:'হাতে সেলাই করা'},
-    {id:'planter',cat:'decor',e:'🪴',p:550,en:'Painted Clay Planter',bn:'রং করা মাটির টব',uen:'medium',ubn:'মাঝারি',den:'With a drainage hole',dbn:'পানি বের হওয়ার ছিদ্র সহ'},
-    {id:'jute',cat:'decor',e:'🧶',p:750,en:'Jute Wall Hanging',bn:'পাটের ওয়াল হ্যাংগিং',uen:'2 feet',ubn:'২ ফুট',den:'Natural jute and beads',dbn:'প্রাকৃতিক পাট আর পুঁতি'}
+    {id:'hamper',cat:'gift',e:'🎁',p:2500,en:'Gift Hamper',bn:'গিফট হ্যাম্পার',uen:'custom box',ubn:'কাস্টম বক্স',den:'Sweets, candles and a keepsake, wrapped',dbn:'মিষ্টি, মোমবাতি আর স্মারক, সাজিয়ে মোড়ানো'},
+    {id:'necklace',cat:'gift',e:'📿',p:850,en:'Beaded Stone Necklace',bn:'পাথরের পুঁতির নেকলেস',uen:'adjustable',ubn:'মাপ বদলানো যায়',den:'Handmade with turquoise-colour stones',dbn:'ফিরোজা রঙের পাথরে হাতে বানানো'},
+    {id:'candle',cat:'gift',e:'🕯️',p:450,en:'Jar Candle Lantern',bn:'জার মোমবাতি লণ্ঠন',uen:'with hanging wire',ubn:'ঝোলানোর তার সহ',den:'For balconies and gardens',dbn:'বারান্দা আর বাগানের জন্য'},
+    {id:'cushion',cat:'decor',e:'🛋️',p:900,en:'Embroidered Cushion Cover',bn:'এমব্রয়ডারি কুশন কভার',uen:'16 x 16 inch',ubn:'১৬ x ১৬ ইঞ্চি',den:'Hand-stitched pattern',dbn:'হাতে সেলাই করা নকশা'},
+    {id:'planter',cat:'decor',e:'🪴',p:550,en:'Painted Planter',bn:'রং করা টব',uen:'medium',ubn:'মাঝারি',den:'Hand-painted flowers',dbn:'হাতে আঁকা ফুল'},
+    {id:'jute',cat:'decor',e:'🧶',p:750,en:'Macramé Wall Hanging',bn:'ম্যাক্রামে ওয়াল হ্যাংগিং',uen:'2 feet',ubn:'২ ফুট',den:'Natural cotton cord',dbn:'প্রাকৃতিক সুতির দড়ি'}
   ],
   delivery:{en:'Inside Dhaka ৳80, outside Dhaka ৳150. 1 to 2 days in Dhaka, 2 to 4 days elsewhere.',bn:'ঢাকার ভিতরে ৳৮০, ঢাকার বাইরে ৳১৫০। ঢাকায় ১-২ দিন, বাইরে ২-৪ দিন লাগে।'},
   time:{en:'Ready items ship the next day. Personalised items take 2 to 3 days.',bn:'রেডি আইটেম পরদিন পাঠাই। নাম লেখা জিনিসে ২-৩ দিন লাগে।'}
@@ -335,7 +337,8 @@ var T={
 bn:{
   demoBy:'নমুনা শপ · বানিয়েছেন Nobo Ishraque',
   demoFor:function(n){return n+'-এর জন্য বানানো ফ্রি নমুনা · Nobo Ishraque'},
-  demoNote:'পণ্য, দাম আর ছবি নমুনা মাত্র। আসল সাইটে থাকবে আপনার পণ্য, দাম আর ছবি।',
+  demoNote:'পণ্য আর দাম নমুনা মাত্র, ছবিগুলো লাইসেন্সকৃত মুক্ত ছবি। আসল সাইটে থাকবে আপনার নিজের পণ্য, দাম আর ছবি।',
+  photoT:'ছবির কৃতজ্ঞতা ও লাইসেন্স',photoNote:'পণ্যের ছবিগুলো Creative Commons বা পাবলিক ডোমেইন লাইসেন্সের মুক্ত ছবি, শুধু নমুনা হিসেবে ব্যবহার করা হয়েছে। এগুলো এই শপের নিজের পণ্য নয়। ছবিগুলো ক্রপ ও ছোট করা হয়েছে।',
   tabSite:'ওয়েবসাইট',tabInbox:'ইনবক্স অটোপাইলট',
   seeItems:'পণ্য দেখুন',ask:'WhatsApp-এ প্রশ্ন করুন',
   askText:function(n){return 'আসসালামু আলাইকুম, '+n+'-এর কাছে একটা প্রশ্ন ছিল।'},
@@ -396,7 +399,8 @@ bn:{
 en:{
   demoBy:'Sample shop by Nobo Ishraque',
   demoFor:function(n){return 'Free sample made for '+n+' by Nobo Ishraque'},
-  demoNote:'Products, prices and pictures are samples. Your real site shows your own products, prices and photos.',
+  demoNote:'Products and prices are samples, and the photos are openly licensed stock images. Your real site shows your own products, prices and photos.',
+  photoT:'Photo credits and licences',photoNote:'Product photos are openly licensed (Creative Commons or public domain) images, used here only as samples. They are not this shop\u2019s own products. Photos have been cropped and resized.',
   tabSite:'Website',tabInbox:'Inbox autopilot',
   seeItems:'See products',ask:'Ask on WhatsApp',
   askText:function(n){return 'Hi '+n+', I have a question.'},
@@ -569,7 +573,7 @@ function renderSite(){
      '<div class="box"><h3>'+esc(w.deliveryT)+'</h3><p>'+esc(L(k.delivery))+'</p></div>'+
      '<div class="box"><h3>'+esc(w.paymentT)+'</h3><p>'+esc(w.payment)+'</p></div></div></div></section>'+
    '<section class="sec"><div class="wrap"><h2>'+esc(w.faqT)+'</h2>'+faq+'</div></section>'+
-   '<footer class="sec foot"><div class="wrap"><div class="credit"><div><b>'+esc(w.creditT)+'</b><p>'+esc(w.credit)+'</p></div>'+contactBtns()+'</div></div></footer>';
+   '<footer class="sec foot"><div class="wrap"><div class="credit"><div><b>'+esc(w.creditT)+'</b><p>'+esc(w.credit)+'</p></div>'+contactBtns()+'</div>'+creditsHtml()+'</div></footer>';
   renderGrid();
 }
 function qtyCtl(it){
@@ -577,11 +581,21 @@ function qtyCtl(it){
   if(!q)return '<button type="button" class="add" data-inc="'+it.id+'">'+esc(w.add)+'</button>';
   return '<div class="qty"><button type="button" data-dec="'+it.id+'" aria-label="'+esc(w.dec)+'">−</button><span>'+num(q)+'</span><button type="button" data-inc="'+it.id+'" aria-label="'+esc(w.inc)+'">+</button></div>';
 }
+var LIC={'by':'CC BY','by-sa':'CC BY-SA','cc0':'CC0','pdm':'Public Domain Mark'};
+var PHOTOS=/*PHOTOS*/{"bakery/truffle": {"title": "Mmm... chocolate cake with peanut butter cream icing", "creator": "jeffreyw", "license": "by", "version": "2.0", "license_url": "https://creativecommons.org/licenses/by/2.0/", "landing": "https://www.flickr.com/photos/7927684@N03/5860751835"}, "bakery/redvelvet": {"title": "Red Velvet Cake", "creator": "katsommers", "license": "by-sa", "version": "2.0", "license_url": "https://creativecommons.org/licenses/by-sa/2.0/", "landing": "https://www.flickr.com/photos/18651845@N00/5094510646"}, "bakery/custom": {"title": "Birthday Cake - Candles", "creator": "jessica.diamond", "license": "by-sa", "version": "2.0", "license_url": "https://creativecommons.org/licenses/by-sa/2.0/", "landing": "https://www.flickr.com/photos/22272408@N07/2655639659"}, "bakery/cupcake": {"title": "Cupcakes", "creator": "lamantin", "license": "by", "version": "2.0", "license_url": "https://creativecommons.org/licenses/by/2.0/", "landing": "https://www.flickr.com/photos/9260793@N07/5143354092"}, "bakery/brownie": {"title": "brownies...yawn...boooring", "creator": "jeffreyw", "license": "by", "version": "2.0", "license_url": "https://creativecommons.org/licenses/by/2.0/", "landing": "https://www.flickr.com/photos/7927684@N03/4448807631"}, "bakery/cookies": {"title": "Peanut Butter Cookies", "creator": "Vegansoldier", "license": "by-sa", "version": "2.0", "license_url": "https://creativecommons.org/licenses/by-sa/2.0/", "landing": "https://www.flickr.com/photos/24283435@N08/8628579983"}, "bakery/banana": {"title": "banana bread", "creator": "sajia.hall", "license": "by-sa", "version": "2.0", "license_url": "https://creativecommons.org/licenses/by-sa/2.0/", "landing": "https://www.flickr.com/photos/62567633@N03/5829331705"}, "bakery/bhapa": {"title": "红豆杯仔糕 Red Bean Rice Cakes - Chongqing Hotpot AUD3.80 small", "creator": "avlxyz", "license": "by-sa", "version": "2.0", "license_url": "https://creativecommons.org/licenses/by-sa/2.0/", "landing": "https://www.flickr.com/photos/10559879@N00/3495770389"}, "bakery/patishapta": {"title": "Rolled - Banana, Ricotta, Almond, Maple Syrup Crepe - Concorde Creperie", "creator": "avlxyz", "license": "by-sa", "version": "2.0", "license_url": "https://creativecommons.org/licenses/by-sa/2.0/", "landing": "https://www.flickr.com/photos/10559879@N00/3097935432"}, "fashion/jamdani": {"title": "My Favourite Saree", "creator": "Kamala L", "license": "by-sa", "version": "2.0", "license_url": "https://creativecommons.org/licenses/by-sa/2.0/", "landing": "https://www.flickr.com/photos/50863590@N00/172475029"}, "fashion/tangail": {"title": "COTTON SAMBALPURI IKAT SAREE", "creator": "RubyGoes", "license": "by", "version": "2.0", "license_url": "https://creativecommons.org/licenses/by/2.0/", "landing": "https://www.flickr.com/photos/61997808@N00/4630977703"}, "fashion/lawn": {"title": "Pretty ladies in salwar kameez", "creator": "Nagarjun", "license": "by", "version": "2.0", "license_url": "https://creativecommons.org/licenses/by/2.0/", "landing": "https://www.flickr.com/photos/64924693@N00/6387773781"}, "fashion/kurti": {"title": "abayas", "creator": "medea_material", "license": "by", "version": "2.0", "license_url": "https://creativecommons.org/licenses/by/2.0/", "landing": "https://www.flickr.com/photos/18618970@N00/5531417864"}, "fashion/borka": {"title": "Abaya team challenge", "creator": "Lars Plougmann", "license": "by-sa", "version": "2.0", "license_url": "https://creativecommons.org/licenses/by-sa/2.0/", "landing": "https://www.flickr.com/photos/75062596@N00/3457289988"}, "fashion/hijab": {"title": "Handicrafts", "creator": "A.Davey", "license": "by", "version": "2.0", "license_url": "https://creativecommons.org/licenses/by/2.0/", "landing": "https://www.flickr.com/photos/40595948@N00/4872838104"}, "fashion/frock": {"title": "165_4280", "creator": "Creole Sha", "license": "by", "version": "2.0", "license_url": "https://creativecommons.org/licenses/by/2.0/", "landing": "https://www.flickr.com/photos/39760496@N05/7270656082"}, "fashion/panjabi": {"title": "kurta pajamas.", "creator": "beccapie", "license": "by-sa", "version": "2.0", "license_url": "https://creativecommons.org/licenses/by-sa/2.0/", "landing": "https://www.flickr.com/photos/99176491@N00/3593570407"}, "food/kacchi": {"title": "Close-up photograph of a generous serving of Kacchi Biryani, showing spiced long-grain ric", "creator": "Ibrahim Riaz", "license": "cc0", "version": "1.0", "license_url": "https://creativecommons.org/publicdomain/zero/1.0/", "landing": "https://wordpress.org/photos/photo/31668e275e/"}, "food/tehari": {"title": "Classic Bangladeshi Tehari — spiced rice with meat, served with lime.", "creator": "Ibrahim Riaz", "license": "cc0", "version": "1.0", "license_url": "https://creativecommons.org/publicdomain/zero/1.0/", "landing": "https://wordpress.org/photos/photo/20868e2763/"}, "food/khichuri": {"title": "mixed khichdi", "creator": "Devika_smile", "license": "by-sa", "version": "2.0", "license_url": "https://creativecommons.org/licenses/by-sa/2.0/", "landing": "https://www.flickr.com/photos/75531279@N05/9604224503"}, "food/roast": {"title": "Chicken Curry", "creator": "rovingI", "license": "by", "version": "2.0", "license_url": "https://creativecommons.org/licenses/by/2.0/", "landing": "https://www.flickr.com/photos/70522326@N00/1453447361"}, "food/beef": {"title": "Beef Curry", "creator": "avlxyz", "license": "by-sa", "version": "2.0", "license_url": "https://creativecommons.org/licenses/by-sa/2.0/", "landing": "https://www.flickr.com/photos/10559879@N00/4859404529"}, "food/samosa": {"title": "samosa di verdure", "creator": "cristina.sanvito", "license": "by", "version": "2.0", "license_url": "https://creativecommons.org/licenses/by/2.0/", "landing": "https://www.flickr.com/photos/40385177@N07/9316387431"}, "food/nuggets": {"title": "Fast Food Chicken Nuggets", "creator": "Walt Stoneburner", "license": "by", "version": "2.0", "license_url": "https://creativecommons.org/licenses/by/2.0/", "landing": "https://www.flickr.com/photos/8404611@N06/14243316316"}, "food/firni": {"title": "phirni", "creator": "jasleen_kaur", "license": "by-sa", "version": "2.0", "license_url": "https://creativecommons.org/licenses/by-sa/2.0/", "landing": "https://www.flickr.com/photos/25384802@N08/6134989198"}, "beauty/serum": {"title": "Dropper bottle, blank retro label", "creator": "", "license": "cc0", "version": "1.0", "license_url": "https://creativecommons.org/publicdomain/zero/1.0/", "landing": "https://www.rawpixel.com/image/11515770/dropper-bottle-blank-retro-label"}, "beauty/aloe": {"title": "Aloe vera gel up close", "creator": "Matt Biddulph", "license": "by-sa", "version": "2.0", "license_url": "https://creativecommons.org/licenses/by-sa/2.0/", "landing": "https://www.flickr.com/photos/51035707449@N01/3929491729"}, "beauty/soap": {"title": "Handmade Soap 2", "creator": "Chia Wei Ku", "license": "by-sa", "version": "4.0", "license_url": "https://creativecommons.org/licenses/by-sa/4.0/", "landing": "https://commons.wikimedia.org/w/index.php?curid=9825582"}, "beauty/tint": {"title": "Lipstick and mirror", "creator": "shawnzrossi", "license": "by", "version": "2.0", "license_url": "https://creativecommons.org/licenses/by/2.0/", "landing": "https://www.flickr.com/photos/19517696@N00/54117410"}, "beauty/mehedi": {"title": "henna tattoo", "creator": "Woodlouse", "license": "by-sa", "version": "2.0", "license_url": "https://creativecommons.org/licenses/by-sa/2.0/", "landing": "https://www.flickr.com/photos/8830859@N04/803555712"}, "beauty/perfume": {"title": "Perfume Bottles", "creator": "Vetiver Aromatics", "license": "by-sa", "version": "2.0", "license_url": "https://creativecommons.org/licenses/by-sa/2.0/", "landing": "https://www.flickr.com/photos/64483003@N02/6782330983"}, "gifts/hamper": {"title": "Gift Hampers at Pritya office", "creator": "PrityaBooks", "license": "by", "version": "2.0", "license_url": "https://creativecommons.org/licenses/by/2.0/", "landing": "https://www.flickr.com/photos/57985295@N07/5531309075"}, "gifts/necklace": {"title": "Aqua Blue Peruvian Opal Sterling silver Necklace", "creator": "NATALIA PHOTOS", "license": "by-sa", "version": "2.0", "license_url": "https://creativecommons.org/licenses/by-sa/2.0/", "landing": "https://www.flickr.com/photos/71099398@N00/3847134534"}, "gifts/candle": {"title": "DIY Hanging Candle Jars", "creator": "apairandaspare", "license": "by", "version": "2.0", "license_url": "https://creativecommons.org/licenses/by/2.0/", "landing": "https://www.flickr.com/photos/66755335@N05/16173973208"}, "gifts/cushion": {"title": "pink mandala - embroidered cushion", "creator": "cernaovec", "license": "by-sa", "version": "2.0", "license_url": "https://creativecommons.org/licenses/by-sa/2.0/", "landing": "https://www.flickr.com/photos/69599449@N05/19869101074"}, "gifts/planter": {"title": "flower pots red and blue flowers", "creator": "john bonham2", "license": "by-sa", "version": "2.0", "license_url": "https://creativecommons.org/licenses/by-sa/2.0/", "landing": "https://www.flickr.com/photos/95205391@N05/8971105005"}, "gifts/jute": {"title": "how to make a circular macrame wall hanging", "creator": "apairandaspare", "license": "by", "version": "2.0", "license_url": "https://creativecommons.org/licenses/by/2.0/", "landing": "https://www.flickr.com/photos/66755335@N05/12152079594"}};
+function creditsHtml(){
+  var w=W(),rows=K().items.map(function(it){var p=PHOTOS[S.kind+'/'+it.id];if(!p)return '';
+    var lic=(LIC[p.license]||String(p.license).toUpperCase())+(p.version&&p.license!=='cc0'&&p.license!=='pdm'?' '+p.version:'');
+    return '<li>'+esc(iname(it))+': '+(p.landing?'<a href="'+esc(p.landing)+'" target="_blank" rel="noopener">':'')+'“'+esc(p.title||'Untitled')+'”'+(p.landing?'</a>':'')+(p.creator?' by '+esc(p.creator):'')+', '+(p.license_url?'<a href="'+esc(p.license_url)+'" target="_blank" rel="noopener">'+esc(lic)+'</a>':esc(lic))+'</li>'}).join('');
+  if(!rows)return '';
+  return '<details class="credits"><summary>'+esc(w.photoT)+'</summary><p>'+esc(w.photoNote)+'</p><ul>'+rows+'</ul></details>';
+}
 function renderGrid(){
   var g=$('grid');if(!g)return;
   var list=K().items.filter(function(it){return S.cat==='all'||it.cat===S.cat});
   g.innerHTML=list.map(function(it,i){
-    return '<article class="card"><div class="pic" style="--t:var('+(i%2?'--tile2':'--tile')+')" aria-hidden="true">'+it.e+'</div>'+
+    var ph=PHOTOS[S.kind+'/'+it.id];
+    return '<article class="card"><div class="pic" style="--t:var('+(i%2?'--tile2':'--tile')+')"><span aria-hidden="true">'+it.e+'</span>'+(ph?'<img src="img/'+S.kind+'-'+it.id+'.jpg" alt="'+esc(iname(it))+'" loading="lazy" width="600" height="450" onerror="this.remove()">':'')+'</div>'+
       '<div class="pbody"><h3 class="pname">'+esc(iname(it))+'</h3><div class="punit">'+esc(iunit(it))+'</div><p class="pdesc">'+esc(idesc(it))+'</p>'+
       '<div class="price">'+tk(it.p)+'</div>'+qtyCtl(it)+'</div></article>';
   }).join('');
